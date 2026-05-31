@@ -11,6 +11,7 @@ mindmap
       Delay distributed design until basics are clear
       package ratelimiter
       one file first
+      panic on invalid constructor input and empty key
     State
       Limiter owns runtime state
       exported type with unexported fields

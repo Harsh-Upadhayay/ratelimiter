@@ -25,6 +25,7 @@ This is the Obsidian entry point for the learning version of the rate limiter.
 - [[decisions/D15 - One File First]]
 - [[decisions/D16 - Limiter Owns Runtime State]]
 - [[decisions/D17 - Constructor Returns Pointer]]
+- [[decisions/D18 - Empty Key Validation]]
 
 ## Go practice notes
 
@@ -36,6 +37,7 @@ This is the Obsidian entry point for the learning version of the rate limiter.
 - [[go/G06 - Time and Duration Boundaries]]
 - [[go/G07 - Do Not Copy Mutexes]]
 - [[go/G08 - Exported Types with Unexported Fields]]
+- [[go/G09 - Method Receivers]]
 
 ## Current open question
 
