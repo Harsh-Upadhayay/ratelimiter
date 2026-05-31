@@ -38,6 +38,7 @@ This is the Obsidian entry point for the learning version of the rate limiter.
 - [[go/G07 - Do Not Copy Mutexes]]
 - [[go/G08 - Exported Types with Unexported Fields]]
 - [[go/G09 - Method Receivers]]
+- [[go/G10 - Early Returns and Guard Clauses]]
 
 ## Current open question
 
