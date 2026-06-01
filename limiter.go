@@ -43,7 +43,6 @@ var ErrInvalidWindowDuration = errors.New("window duration must be greater than 
 
 // NewLimiter creates a new Limiter with the specified limit and window duration.
 func NewLimiter(limit int, windowDuration time.Duration) (*Limiter, error) {
-
 	if limit <= 0 {
 		return nil, ErrInvalidLimit
 	}
@@ -65,7 +64,6 @@ func NewLimiter(limit int, windowDuration time.Duration) (*Limiter, error) {
 // how many requests are remaining in the current window,
 // and how long to wait before retrying if the limit has been exceeded.
 func (l *Limiter) Allow(key string, now time.Time) (Result, error) {
-
 	if key == "" {
 		return Result{}, ErrEmptyKey
 	}
@@ -75,45 +73,57 @@ func (l *Limiter) Allow(key string, now time.Time) (Result, error) {
 
 	curState, exists := l.states[key]
 
-	// New key
+	result, updatedState := decideFixedWindow(
+		now,
+		l.limit,
+		l.windowDuration,
+		curState,
+		exists,
+	)
+	l.states[key] = updatedState
+	return result, nil
+}
+
+// Fixed window algorithm implementation.
+// Doesn't interact with the storage layer
+// Returns the result of the rate limit check and the updated user state.
+// Parameter ordering is config first, then state
+func decideFixedWindow(
+	now time.Time,
+	requestLimit int,
+	windowDuration time.Duration,
+	state userState,
+	exists bool,
+) (Result, userState) {
 	if !exists {
-		curState = userState{windowStartTime: now, consumedRequests: 1}
-		l.states[key] = curState
+		state = userState{windowStartTime: now, consumedRequests: 1}
 		return Result{
 			Allowed:    true,
-			Remaining:  l.limit - 1,
+			Remaining:  requestLimit - 1,
 			RetryAfter: 0,
-		}, nil
+		}, state
 	}
 
-	// Expired window: reset
-	if !curState.windowStartTime.Add(l.windowDuration).After(now) {
-		curState.windowStartTime = now
-		curState.consumedRequests = 1
-		l.states[key] = curState
-
+	if !state.windowStartTime.Add(windowDuration).After(now) {
+		state.windowStartTime = now
+		state.consumedRequests = 1
 		return Result{
 			Allowed:    true,
-			Remaining:  l.limit - 1,
+			Remaining:  requestLimit - 1,
 			RetryAfter: 0,
-		}, nil
+		}, state
 	}
-	// Active window with available limit
-	if curState.consumedRequests < l.limit {
-		curState.consumedRequests++
-		l.states[key] = curState
-
+	if state.consumedRequests < requestLimit {
+		state.consumedRequests++
 		return Result{
 			Allowed:    true,
-			Remaining:  l.limit - curState.consumedRequests,
+			Remaining:  requestLimit - state.consumedRequests,
 			RetryAfter: 0,
-		}, nil
+		}, state
 	}
-
-	// Active window with limit exhausted
 	return Result{
 		Allowed:    false,
 		Remaining:  0,
-		RetryAfter: curState.windowStartTime.Add(l.windowDuration).Sub(now),
-	}, nil
+		RetryAfter: state.windowStartTime.Add(windowDuration).Sub(now),
+	}, state
 }

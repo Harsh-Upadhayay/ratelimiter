@@ -39,6 +39,13 @@ This is the Obsidian entry point for the learning version of the rate limiter.
 - [[decisions/D21 - Result Contract]]
 - [[decisions/D22 - Sentinel Error for Empty Key]]
 
+## V3 decisions
+
+- Hub: [[V3 Decision Logic Index]]
+- [[decisions/D23 - Private Fixed Window Decision Helper]]
+- [[decisions/D24 - Test Through Public API]]
+- [[decisions/D25 - Allow as Orchestrator]]
+
 ## Go practice notes
 
 - Hub: [[Go Concepts Index]]
@@ -55,3 +62,6 @@ This is the Obsidian entry point for the learning version of the rate limiter.
 - [[go/G11 - Multiple Return Values]]
 - [[go/G12 - Sentinel Errors]]
 - [[go/G13 - Exported Result Structs]]
+- [[go/G14 - Pure Helper Functions]]
+- [[go/G15 - Public API Tests]]
+- [[go/G16 - Helper Parameter Ordering]]

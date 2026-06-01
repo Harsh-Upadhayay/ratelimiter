@@ -42,6 +42,11 @@ mindmap
       ErrEmptyKey sentinel error
       rate-limit rejection is not an error
       RetryAfter only matters when rejected
+    V3 Refactor
+      private pure decision helper
+      Allow remains orchestration
+      test through public API
+      helper parameters grouped by meaning
 ```
 
 ## Linked notes
