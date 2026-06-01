@@ -6,9 +6,13 @@ This is the Obsidian entry point for the learning version of the rate limiter.
 
 - [[plan|Target 6-step plan]]
 - [[mindmaps/V1 Learning Mindmap|V1 learning mindmap]]
+- [[V1 Decision Index]]
+- [[V2 API Evolution Index]]
+- [[Go Concepts Index]]
 
 ## V1 decisions
 
+- Hub: [[V1 Decision Index]]
 - [[decisions/D01 - Fixed Window First]]
 - [[decisions/D02 - State Shape Map String UserState]]
 - [[decisions/D03 - Pointer Receiver for Mutating Limiter]]
@@ -27,8 +31,17 @@ This is the Obsidian entry point for the learning version of the rate limiter.
 - [[decisions/D17 - Constructor Returns Pointer]]
 - [[decisions/D18 - Empty Key Validation]]
 
+## V2 decisions
+
+- Hub: [[V2 API Evolution Index]]
+- [[decisions/D19 - Result and Error Return]]
+- [[decisions/D20 - Generic Rate Limit Key]]
+- [[decisions/D21 - Result Contract]]
+- [[decisions/D22 - Sentinel Error for Empty Key]]
+
 ## Go practice notes
 
+- Hub: [[Go Concepts Index]]
 - [[go/G01 - Structs for Grouped State]]
 - [[go/G02 - Maps Comma Ok and Value Copies]]
 - [[go/G03 - Pointer Receivers]]
@@ -39,7 +52,6 @@ This is the Obsidian entry point for the learning version of the rate limiter.
 - [[go/G08 - Exported Types with Unexported Fields]]
 - [[go/G09 - Method Receivers]]
 - [[go/G10 - Early Returns and Guard Clauses]]
-
-## Current open question
-
-- [[decisions/D10 - Return Type]]
+- [[go/G11 - Multiple Return Values]]
+- [[go/G12 - Sentinel Errors]]
+- [[go/G13 - Exported Result Structs]]

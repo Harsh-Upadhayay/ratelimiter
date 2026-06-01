@@ -36,6 +36,12 @@ mindmap
       constructor errors
       per-key locks
       Redis and CAS
+    V2 API
+      Allow returns Result and error
+      generic key instead of user ID
+      ErrEmptyKey sentinel error
+      rate-limit rejection is not an error
+      RetryAfter only matters when rejected
 ```
 
 ## Linked notes
@@ -45,3 +51,7 @@ mindmap
 - [[D05 - Explicit Time Input]]
 - [[D09 - Defer Unlock After Lock]]
 - [[D10 - Return Type]]
+- [[D19 - Result and Error Return]]
+- [[D20 - Generic Rate Limit Key]]
+- [[D21 - Result Contract]]
+- [[D22 - Sentinel Error for Empty Key]]

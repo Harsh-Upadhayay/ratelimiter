@@ -25,4 +25,4 @@ Introduce interfaces after concrete implementations reveal the true shared contr
 ## Links
 
 - [[D12 - Exported API Boundary]]
-- [[../plan|Target 6-step plan]]
+- [[plan|Target 6-step plan]]

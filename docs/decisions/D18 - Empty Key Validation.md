@@ -22,8 +22,13 @@ Panic is harsh for reusable library code. A production API may prefer returning 
 
 When adding HTTP middleware or a richer result/error API.
 
+## V2 update
+
+V2 replaces this panic with a returned sentinel error. See [[D22 - Sentinel Error for Empty Key]].
+
 ## Links
 
 - [[D10 - Return Type]]
 - [[D11 - Constructor Validation]]
 - [[D12 - Exported API Boundary]]
+- [[D22 - Sentinel Error for Empty Key]]
