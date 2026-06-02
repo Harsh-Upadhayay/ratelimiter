@@ -7,7 +7,7 @@ import (
 )
 
 func TestInvalidLimitError(t *testing.T) {
-	_, err := NewLimiter(0, time.Minute)
+	_, err := NewFixedWindow(0, time.Minute)
 
 	if !errors.Is(err, ErrInvalidLimit) {
 		t.Fatalf("limiter created with invalid limit")
@@ -15,7 +15,7 @@ func TestInvalidLimitError(t *testing.T) {
 }
 
 func TestInvalidWindowDurationError(t *testing.T) {
-	_, err := NewLimiter(1, 0)
+	_, err := NewFixedWindow(1, 0)
 
 	if !errors.Is(err, ErrInvalidWindowDuration) {
 		t.Fatalf("limiter created with invalid window duration")
@@ -23,7 +23,8 @@ func TestInvalidWindowDurationError(t *testing.T) {
 }
 
 func TestEmptyKeyError(t *testing.T) {
-	limiter, err := NewLimiter(1, time.Minute)
+	algo, err := NewFixedWindow(1, time.Minute)
+	limiter, err := NewLimiter(algo)
 
 	if err != nil {
 		t.Fatalf("new limiter returned error : %v", err)
@@ -38,7 +39,11 @@ func TestEmptyKeyError(t *testing.T) {
 }
 
 func TestAllowRejectsAfterLimit(t *testing.T) {
-	limiter, err := NewLimiter(2, time.Minute)
+	algo, err := NewFixedWindow(2, time.Minute)
+	if err != nil {
+		t.Fatalf("new fixed window returned error: %v", err)
+	}
+	limiter, err := NewLimiter(algo)
 
 	if err != nil {
 		t.Fatalf("new limiter returned error: %v", err)
@@ -74,7 +79,11 @@ func TestAllowRejectsAfterLimit(t *testing.T) {
 }
 
 func TestAllowTracksUsersIndependently(t *testing.T) {
-	limiter, err := NewLimiter(1, time.Minute)
+	algo, err := NewFixedWindow(1, time.Minute)
+	if err != nil {
+		t.Fatalf("new fixed window returned error: %v", err)
+	}
+	limiter, err := NewLimiter(algo)
 	if err != nil {
 		t.Fatalf("new limiter returned error: %v", err)
 	}
@@ -108,7 +117,11 @@ func TestAllowTracksUsersIndependently(t *testing.T) {
 }
 
 func TestAllowResetsAtWindowBoundary(t *testing.T) {
-	limiter, err := NewLimiter(1, time.Minute)
+	algo, err := NewFixedWindow(1, time.Minute)
+	if err != nil {
+		t.Fatalf("new fixed window returned error: %v", err)
+	}
+	limiter, err := NewLimiter(algo)
 	if err != nil {
 		t.Fatalf("new limiter returned error: %v", err)
 	}
@@ -140,7 +153,11 @@ func TestAllowResetsAtWindowBoundary(t *testing.T) {
 }
 
 func TestAllowRejectsBeforeWindowBoundary(t *testing.T) {
-	limiter, err := NewLimiter(1, time.Minute)
+	algo, err := NewFixedWindow(1, time.Minute)
+	if err != nil {
+		t.Fatalf("new fixed window returned error: %v", err)
+	}
+	limiter, err := NewLimiter(algo)
 	if err != nil {
 		t.Fatalf("new limiter returned error: %v", err)
 	}
@@ -163,7 +180,11 @@ func TestAllowRejectsBeforeWindowBoundary(t *testing.T) {
 }
 
 func TestRemainingQuotaCalculation(t *testing.T) {
-	limiter, err := NewLimiter(2, time.Minute)
+	algo, err := NewFixedWindow(2, time.Minute)
+	if err != nil {
+		t.Fatalf("new fixed window returned error: %v", err)
+	}
+	limiter, err := NewLimiter(algo)
 	if err != nil {
 		t.Fatalf("new limiter returned error: %v", err)
 	}
@@ -198,7 +219,11 @@ func TestRemainingQuotaCalculation(t *testing.T) {
 }
 
 func TestRetryAfterCalculation(t *testing.T) {
-	limiter, err := NewLimiter(1, time.Minute)
+	algo, err := NewFixedWindow(1, time.Minute)
+	if err != nil {
+		t.Fatalf("new fixed window returned error: %v", err)
+	}
+	limiter, err := NewLimiter(algo)
 	if err != nil {
 		t.Fatalf("new limiter returned error: %v", err)
 	}
@@ -220,5 +245,13 @@ func TestRetryAfterCalculation(t *testing.T) {
 
 	if result.RetryAfter != time.Minute {
 		t.Fatalf("expected retry-after of 1 minute != %v ", result.RetryAfter)
+	}
+}
+
+func TestNilAlgorighmError(t *testing.T) {
+	_, err := NewLimiter(nil)
+
+	if !errors.Is(err, ErrNilAlgorithm) {
+		t.Fatalf("limiter created with nil algorithm")
 	}
 }

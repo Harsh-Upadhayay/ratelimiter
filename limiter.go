@@ -6,20 +6,92 @@ import (
 	"time"
 )
 
-type userState struct {
+type algorithmState interface {
+	isAlgorithmState()
+}
+
+type fixedWindowState struct {
 	windowStartTime  time.Time
 	consumedRequests int
 }
 
-// Limiter implements a fixed window rate limiter that tracks the
+func (f fixedWindowState) isAlgorithmState() {}
+
+type algorithm interface {
+	Decide(now time.Time, state algorithmState, exists bool) (Result, algorithmState, error)
+}
+
+// FixedWindow implements a fixed window rate limiter algorithm that tracks the
 // number of requests made by each key within a
 // specified time window. It allows a certain number of requests
 // per window and resets the count when the window expires.
-type Limiter struct {
-	limit          int
+type FixedWindow struct {
+	requestLimit   int
 	windowDuration time.Duration
-	states         map[string]userState
-	mu             sync.Mutex
+}
+
+func NewFixedWindow(requestLimit int, windowDuration time.Duration) (*FixedWindow, error) {
+	if requestLimit <= 0 {
+		return nil, ErrInvalidLimit
+	}
+	if windowDuration <= 0 {
+		return nil, ErrInvalidWindowDuration
+	}
+
+	return &FixedWindow{
+		requestLimit:   requestLimit,
+		windowDuration: windowDuration,
+	}, nil
+}
+
+// Fixed window algorithm implementation.
+// Doesn't interact with the storage layer
+// Returns the result of the rate limit check and the updated user state.
+// Parameter ordering is config first, then state
+func (f FixedWindow) Decide(now time.Time, state algorithmState, exists bool) (Result, algorithmState, error) {
+	if !exists {
+		fwState := fixedWindowState{windowStartTime: now, consumedRequests: 1}
+		return Result{
+			Allowed:    true,
+			Remaining:  f.requestLimit - 1,
+			RetryAfter: 0,
+		}, fwState, nil
+	}
+
+	fwState, ok := state.(fixedWindowState)
+
+	if !ok {
+		return Result{}, state, ErrUnsupportedAlgorithmState
+	}
+
+	if !fwState.windowStartTime.Add(f.windowDuration).After(now) {
+		fwState.windowStartTime = now
+		fwState.consumedRequests = 1
+		return Result{
+			Allowed:    true,
+			Remaining:  f.requestLimit - 1,
+			RetryAfter: 0,
+		}, fwState, nil
+	}
+	if fwState.consumedRequests < f.requestLimit {
+		fwState.consumedRequests++
+		return Result{
+			Allowed:    true,
+			Remaining:  f.requestLimit - fwState.consumedRequests,
+			RetryAfter: 0,
+		}, fwState, nil
+	}
+	return Result{
+		Allowed:    false,
+		Remaining:  0,
+		RetryAfter: fwState.windowStartTime.Add(f.windowDuration).Sub(now),
+	}, fwState, nil
+}
+
+type Limiter struct {
+	algo   algorithm
+	states map[string]algorithmState
+	mu     sync.Mutex
 }
 
 // Result represents the outcome of a rate limit check,
@@ -32,28 +104,31 @@ type Result struct {
 	RetryAfter time.Duration
 }
 
-// ErrEmptyKey is returned when the rate limit key is empty
+// ErrEmptyKey is returned when the rate limit key is empty;
 var ErrEmptyKey = errors.New("rate limit key is required")
 
-// ErrInvalidLimit is returned when the limit is not greater than 0
+// ErrInvalidLimit is returned when the limit is not greater than 0;
 var ErrInvalidLimit = errors.New("limit must be greater than 0")
 
-// ErrInvalidWindowDuration is returned when the window duration is not greater than 0
+// ErrInvalidWindowDuration is returned when the window duration is not greater than 0;
 var ErrInvalidWindowDuration = errors.New("window duration must be greater than 0")
 
-// NewLimiter creates a new Limiter with the specified limit and window duration.
-func NewLimiter(limit int, windowDuration time.Duration) (*Limiter, error) {
-	if limit <= 0 {
-		return nil, ErrInvalidLimit
-	}
-	if windowDuration <= 0 {
-		return nil, ErrInvalidWindowDuration
+// ErrUnsupportedAlgorithmState is returned when the algorithm receives a state that it doesn't recognize;
+var ErrUnsupportedAlgorithmState = errors.New("unsupported algorithm state passed to the algorithm")
+
+// ErrNilAlgorithm is returned when trying to create a Limiter with a nil algorithm;
+var ErrNilAlgorithm = errors.New("algorithm cannot be nil")
+
+// NewLimiter creates a new Limiter with the specified algorithm
+func NewLimiter(algo algorithm) (*Limiter, error) {
+
+	if algo == nil {
+		return nil, ErrNilAlgorithm
 	}
 
 	limiter := &Limiter{
-		limit:          limit,
-		windowDuration: windowDuration,
-		states:         make(map[string]userState),
+		algo:   algo,
+		states: make(map[string]algorithmState),
 	}
 
 	return limiter, nil
@@ -73,57 +148,16 @@ func (l *Limiter) Allow(key string, now time.Time) (Result, error) {
 
 	curState, exists := l.states[key]
 
-	result, updatedState := decideFixedWindow(
+	result, updatedState, err := l.algo.Decide(
 		now,
-		l.limit,
-		l.windowDuration,
 		curState,
 		exists,
 	)
+
+	if err != nil {
+		return Result{}, err
+	}
+
 	l.states[key] = updatedState
 	return result, nil
-}
-
-// Fixed window algorithm implementation.
-// Doesn't interact with the storage layer
-// Returns the result of the rate limit check and the updated user state.
-// Parameter ordering is config first, then state
-func decideFixedWindow(
-	now time.Time,
-	requestLimit int,
-	windowDuration time.Duration,
-	state userState,
-	exists bool,
-) (Result, userState) {
-	if !exists {
-		state = userState{windowStartTime: now, consumedRequests: 1}
-		return Result{
-			Allowed:    true,
-			Remaining:  requestLimit - 1,
-			RetryAfter: 0,
-		}, state
-	}
-
-	if !state.windowStartTime.Add(windowDuration).After(now) {
-		state.windowStartTime = now
-		state.consumedRequests = 1
-		return Result{
-			Allowed:    true,
-			Remaining:  requestLimit - 1,
-			RetryAfter: 0,
-		}, state
-	}
-	if state.consumedRequests < requestLimit {
-		state.consumedRequests++
-		return Result{
-			Allowed:    true,
-			Remaining:  requestLimit - state.consumedRequests,
-			RetryAfter: 0,
-		}, state
-	}
-	return Result{
-		Allowed:    false,
-		Remaining:  0,
-		RetryAfter: state.windowStartTime.Add(windowDuration).Sub(now),
-	}, state
 }
