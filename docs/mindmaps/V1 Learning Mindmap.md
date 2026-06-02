@@ -57,6 +57,14 @@ mindmap
       algorithm owns config validation
       manual assembly with built-in algorithms
       Decide returns state mismatch errors
+    V5 Token Bucket
+      capacity is burst size
+      refill rate is sustained rate
+      lazy refill on request
+      float64 tokens internally
+      Remaining exposes whole requests
+      clamp negative elapsed time
+      new buckets start full
 ```
 
 ## Linked notes

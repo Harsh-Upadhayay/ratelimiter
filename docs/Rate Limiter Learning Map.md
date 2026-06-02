@@ -60,6 +60,19 @@ This is the Obsidian entry point for the learning version of the rate limiter.
 - [[decisions/D34 - Initialize Missing State Before Assertion]]
 - Checkpoint: [[checkpoints/C04 - V4 Algorithm Boundary Checkpoint]]
 
+## V5 decisions
+
+- Hub: [[V5 Token Bucket Design Index]]
+- [[decisions/D35 - Token Bucket as Second Algorithm]]
+- [[decisions/D36 - Token Bucket Capacity and Refill Rate]]
+- [[decisions/D37 - Token Bucket State Shape]]
+- [[decisions/D38 - Lazy Token Refill]]
+- [[decisions/D39 - Floating Point Token Arithmetic]]
+- [[decisions/D40 - Whole Request Remaining]]
+- [[decisions/D41 - Token Bucket RetryAfter]]
+- [[decisions/D42 - Clamp Negative Elapsed Time]]
+- [[decisions/D43 - Token Bucket Starts Full]]
+
 ## Go practice notes
 
 - Hub: [[Go Concepts Index]]
@@ -85,3 +98,5 @@ This is the Obsidian entry point for the learning version of the rate limiter.
 - [[go/G20 - Type Assertions]]
 - [[go/G21 - Constructor Validation Ownership]]
 - [[go/G22 - Nil Interface Guard]]
+- [[go/G23 - Duration Seconds Conversion]]
+- [[go/G24 - Lazy State Materialization]]

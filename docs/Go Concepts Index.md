@@ -26,6 +26,8 @@ This hub groups Go language and style concepts used by the rate limiter.
 
 - [[G06 - Time and Duration Boundaries]]
 - [[G10 - Early Returns and Guard Clauses]]
+- [[G23 - Duration Seconds Conversion]]
+- [[G24 - Lazy State Materialization]]
 
 ## Errors and API shape
 
@@ -47,3 +49,4 @@ This hub groups Go language and style concepts used by the rate limiter.
 - [[V2 API Evolution Index]]
 - [[V3 Decision Logic Index]]
 - [[V4 Algorithm Abstraction Index]]
+- [[V5 Token Bucket Design Index]]
