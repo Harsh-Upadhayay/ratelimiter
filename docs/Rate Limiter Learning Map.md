@@ -46,6 +46,20 @@ This is the Obsidian entry point for the learning version of the rate limiter.
 - [[decisions/D24 - Test Through Public API]]
 - [[decisions/D25 - Allow as Orchestrator]]
 
+## V4 decisions
+
+- Hub: [[V4 Algorithm Abstraction Index]]
+- [[decisions/D26 - Introduce Algorithm Interface]]
+- [[decisions/D27 - Algorithm Owned State]]
+- [[decisions/D28 - Marker Interface for Algorithm State]]
+- [[decisions/D29 - Exists Flag for Missing State]]
+- [[decisions/D30 - Keep Algorithm Interface Private]]
+- [[decisions/D31 - Algorithm Owns Config Validation]]
+- [[decisions/D32 - Manual Assembly with Built In Algorithms]]
+- [[decisions/D33 - Decide Returns State Errors]]
+- [[decisions/D34 - Initialize Missing State Before Assertion]]
+- Checkpoint: [[checkpoints/C04 - V4 Algorithm Boundary Checkpoint]]
+
 ## Go practice notes
 
 - Hub: [[Go Concepts Index]]
@@ -65,3 +79,9 @@ This is the Obsidian entry point for the learning version of the rate limiter.
 - [[go/G14 - Pure Helper Functions]]
 - [[go/G15 - Public API Tests]]
 - [[go/G16 - Helper Parameter Ordering]]
+- [[go/G17 - Interfaces From Real Variation]]
+- [[go/G18 - Structural Interface Satisfaction]]
+- [[go/G19 - Marker Interfaces and Opaque State]]
+- [[go/G20 - Type Assertions]]
+- [[go/G21 - Constructor Validation Ownership]]
+- [[go/G22 - Nil Interface Guard]]

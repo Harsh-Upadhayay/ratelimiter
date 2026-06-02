@@ -34,9 +34,16 @@ This hub groups Go language and style concepts used by the rate limiter.
 - [[G14 - Pure Helper Functions]]
 - [[G15 - Public API Tests]]
 - [[G16 - Helper Parameter Ordering]]
+- [[G17 - Interfaces From Real Variation]]
+- [[G18 - Structural Interface Satisfaction]]
+- [[G19 - Marker Interfaces and Opaque State]]
+- [[G20 - Type Assertions]]
+- [[G21 - Constructor Validation Ownership]]
+- [[G22 - Nil Interface Guard]]
 
 ## Decision hubs
 
 - [[V1 Decision Index]]
 - [[V2 API Evolution Index]]
 - [[V3 Decision Logic Index]]
+- [[V4 Algorithm Abstraction Index]]

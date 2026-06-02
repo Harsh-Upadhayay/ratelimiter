@@ -47,6 +47,16 @@ mindmap
       Allow remains orchestration
       test through public API
       helper parameters grouped by meaning
+    V4 Algorithm Boundary
+      second algorithm creates real variation
+      introduce Algorithm interface
+      algorithm owns state shape
+      marker interface narrows valid states
+      explicit exists flag for missing state
+      keep algorithm interface private initially
+      algorithm owns config validation
+      manual assembly with built-in algorithms
+      Decide returns state mismatch errors
 ```
 
 ## Linked notes
