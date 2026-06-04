@@ -65,6 +65,7 @@ mindmap
       Remaining exposes whole requests
       clamp negative elapsed time
       new buckets start full
+      split files by responsibility
 ```
 
 ## Linked notes

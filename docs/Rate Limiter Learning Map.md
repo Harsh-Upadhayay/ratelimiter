@@ -72,6 +72,7 @@ This is the Obsidian entry point for the learning version of the rate limiter.
 - [[decisions/D41 - Token Bucket RetryAfter]]
 - [[decisions/D42 - Clamp Negative Elapsed Time]]
 - [[decisions/D43 - Token Bucket Starts Full]]
+- [[decisions/D44 - Split Files by Responsibility]]
 
 ## Go practice notes
 
@@ -100,3 +101,4 @@ This is the Obsidian entry point for the learning version of the rate limiter.
 - [[go/G22 - Nil Interface Guard]]
 - [[go/G23 - Duration Seconds Conversion]]
 - [[go/G24 - Lazy State Materialization]]
+- [[go/G25 - Package Scope Across Files]]

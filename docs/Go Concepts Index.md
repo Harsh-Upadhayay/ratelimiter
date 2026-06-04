@@ -28,6 +28,7 @@ This hub groups Go language and style concepts used by the rate limiter.
 - [[G10 - Early Returns and Guard Clauses]]
 - [[G23 - Duration Seconds Conversion]]
 - [[G24 - Lazy State Materialization]]
+- [[G25 - Package Scope Across Files]]
 
 ## Errors and API shape
 

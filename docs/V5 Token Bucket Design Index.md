@@ -15,6 +15,7 @@ This hub tracks the token bucket design before implementation.
 - [[D41 - Token Bucket RetryAfter]]
 - [[D42 - Clamp Negative Elapsed Time]]
 - [[D43 - Token Bucket Starts Full]]
+- [[D44 - Split Files by Responsibility]]
 
 ## Related earlier decisions
 
@@ -29,6 +30,7 @@ This hub tracks the token bucket design before implementation.
 - [[G21 - Constructor Validation Ownership]]
 - [[G23 - Duration Seconds Conversion]]
 - [[G24 - Lazy State Materialization]]
+- [[G25 - Package Scope Across Files]]
 
 ## Future bridge
 
