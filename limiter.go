@@ -88,6 +88,75 @@ func (f FixedWindow) Decide(now time.Time, state algorithmState, exists bool) (R
 	}, fwState, nil
 }
 
+type TokenBucket struct {
+	capacity   int
+	refillRate float64
+}
+
+type tokenBucketState struct {
+	lastRefillTime  time.Time
+	availableTokens float64
+}
+
+func NewTokenBucket(capacity int, refilRate float64) (*TokenBucket, error) {
+	if capacity <= 0 {
+		return nil, ErrInvalidCapacity
+	}
+
+	if refilRate <= 0 {
+		return nil, ErrInvalidRefilRate
+	}
+
+	return &TokenBucket{
+		capacity:   capacity,
+		refillRate: refilRate,
+	}, nil
+}
+
+func (t tokenBucketState) isAlgorithmState() {}
+
+func (t TokenBucket) Decide(now time.Time, state algorithmState, exists bool) (Result, algorithmState, error) {
+	if !exists {
+		tbState := tokenBucketState{lastRefillTime: now, availableTokens: float64(t.capacity - 1)}
+		return Result{
+			Allowed:    true,
+			Remaining:  t.capacity - 1,
+			RetryAfter: 0,
+		}, tbState, nil
+	}
+
+	tbState, ok := state.(tokenBucketState)
+
+	if !ok {
+		return Result{}, state, ErrUnsupportedAlgorithmState
+	}
+
+	elapsedTime := now.Sub(tbState.lastRefillTime)
+	if elapsedTime > 0 {
+		tbState.lastRefillTime = now
+	} else {
+		elapsedTime = 0
+	}
+
+	refilled := elapsedTime.Seconds() * t.refillRate
+	tbState.availableTokens = min(float64(t.capacity), tbState.availableTokens+refilled)
+
+	if tbState.availableTokens >= 1 {
+		tbState.availableTokens -= 1
+		return Result{
+			Allowed:    true,
+			Remaining:  int(tbState.availableTokens),
+			RetryAfter: 0,
+		}, tbState, nil
+	}
+
+	return Result{
+		Allowed:    false,
+		Remaining:  0,
+		RetryAfter: time.Duration((float64(1) - tbState.availableTokens) / t.refillRate * float64(time.Second)),
+	}, tbState, nil
+}
+
 type Limiter struct {
 	algo   algorithm
 	states map[string]algorithmState
@@ -118,6 +187,10 @@ var ErrUnsupportedAlgorithmState = errors.New("unsupported algorithm state passe
 
 // ErrNilAlgorithm is returned when trying to create a Limiter with a nil algorithm;
 var ErrNilAlgorithm = errors.New("algorithm cannot be nil")
+
+var ErrInvalidCapacity = errors.New("capacity must be greater than 0")
+
+var ErrInvalidRefilRate = errors.New("refil rate must be greater than 0")
 
 // NewLimiter creates a new Limiter with the specified algorithm
 func NewLimiter(algo algorithm) (*Limiter, error) {
