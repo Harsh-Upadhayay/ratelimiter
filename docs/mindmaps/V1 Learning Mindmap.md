@@ -66,6 +66,11 @@ mindmap
       clamp negative elapsed time
       new buckets start full
       split files by responsibility
+    V6 Storage Boundary
+      limiter should not own map storage
+      simple Get and Set can race
+      Get plus CAS preserves read decide write
+      retry on version conflict
 ```
 
 ## Linked notes

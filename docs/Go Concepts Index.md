@@ -21,6 +21,7 @@ This hub groups Go language and style concepts used by the rate limiter.
 
 - [[G04 - Mutexes and Critical Sections]]
 - [[G05 - Defer Unlock Pattern]]
+- [[G26 - Optimistic Concurrency with CAS]]
 
 ## Time and control flow
 
@@ -51,3 +52,4 @@ This hub groups Go language and style concepts used by the rate limiter.
 - [[V3 Decision Logic Index]]
 - [[V4 Algorithm Abstraction Index]]
 - [[V5 Token Bucket Design Index]]
+- [[V6 Storage Boundary Index]]

@@ -74,6 +74,13 @@ This is the Obsidian entry point for the learning version of the rate limiter.
 - [[decisions/D43 - Token Bucket Starts Full]]
 - [[decisions/D44 - Split Files by Responsibility]]
 
+## V6 decisions
+
+- Hub: [[V6 Storage Boundary Index]]
+- [[decisions/D45 - Split Storage from Limiter]]
+- [[decisions/D46 - GetSet Race]]
+- [[decisions/D47 - StateStore Uses Get and CAS]]
+
 ## Go practice notes
 
 - Hub: [[Go Concepts Index]]
@@ -102,3 +109,4 @@ This is the Obsidian entry point for the learning version of the rate limiter.
 - [[go/G23 - Duration Seconds Conversion]]
 - [[go/G24 - Lazy State Materialization]]
 - [[go/G25 - Package Scope Across Files]]
+- [[go/G26 - Optimistic Concurrency with CAS]]
