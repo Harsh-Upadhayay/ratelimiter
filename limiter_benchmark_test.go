@@ -106,3 +106,74 @@ func BenchmarkAllowManyKeyFixedWindowParallel(b *testing.B) {
 	})
 
 }
+
+func BenchmarkAllowSameKeyTokenBucket(b *testing.B) {
+	limiter := newTokenBucketLimiter(b, 1, 1)
+	now := time.Date(1, time.January, 1, 1, 1, 1, 1, time.UTC)
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_, err := limiter.Allow("key_1", now)
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+
+}
+
+func BenchmarkAllowSameKeyTokenBucketParallel(b *testing.B) {
+	limiter := newTokenBucketLimiter(b, 1, 1)
+	now := time.Date(1, time.January, 1, 1, 1, 1, 1, time.UTC)
+	b.ResetTimer()
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			_, err := limiter.Allow("key_1", now)
+			if err != nil {
+				b.Fatal(err)
+			}
+		}
+	})
+
+}
+
+func BenchmarkAllowManyKeyTokenBucket(b *testing.B) {
+	limiter := newTokenBucketLimiter(b, 10, 1)
+	now := time.Date(1, time.January, 1, 1, 1, 1, 1, time.UTC)
+
+	keys := make([]string, 1024)
+	for i := range keys {
+		keys[i] = "key-" + strconv.Itoa(i)
+	}
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_, err := limiter.Allow(keys[i%(len(keys))], now)
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
+func BenchmarkAllowManyKeyTokenBucketParallel(b *testing.B) {
+	limiter := newTokenBucketLimiter(b, 1, 1)
+	now := time.Date(1, time.January, 1, 1, 1, 1, 1, time.UTC)
+
+	keys := make([]string, 1024)
+	for i := range keys {
+		keys[i] = "key-" + strconv.Itoa(i)
+	}
+	b.ResetTimer()
+
+	b.RunParallel(func(pb *testing.PB) {
+		i := 0
+		for pb.Next() {
+			_, err := limiter.Allow(keys[i%len(keys)], now)
+			if err != nil {
+				b.Fatal(err)
+			}
+			i++
+		}
+	})
+
+}
