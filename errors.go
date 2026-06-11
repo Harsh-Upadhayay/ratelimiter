@@ -22,3 +22,6 @@ var ErrInvalidCapacity = errors.New("capacity must be greater than 0")
 
 // ErrInvalidRefillRate is returned when the refill rate is not greater than 0.
 var ErrInvalidRefillRate = errors.New("refill rate must be greater than 0")
+
+// ErrCASConflict is returned when the limiter cannot commit state after retrying CAS conflicts.
+var ErrCASConflict = errors.New("max number of CAS conflict attempts exhausted")
