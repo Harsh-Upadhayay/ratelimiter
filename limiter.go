@@ -12,14 +12,14 @@ type Limiter struct {
 }
 
 // NewLimiter creates a new Limiter with the specified algorithm.
-func NewLimiter(algo algorithm, store StateStore) (*Limiter, error) {
+func NewLimiter(algo algorithm) (*Limiter, error) {
 	if algo == nil {
 		return nil, ErrNilAlgorithm
 	}
 
 	limiter := &Limiter{
 		algo:  algo,
-		store: store,
+		store: NewMemoryStore(),
 	}
 
 	return limiter, nil
