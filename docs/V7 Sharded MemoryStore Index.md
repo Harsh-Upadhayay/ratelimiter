@@ -11,6 +11,7 @@ This hub tracks the move from one memory-store mutex to a sharded in-memory back
 - [[D55 - Configurable Shard Count]]
 - [[D56 - Reuse MemoryStore Internally]]
 - [[D57 - Sharded MemoryStore as Default Backend]]
+- [[D58 - Trust Internal Invariants]]
 
 ## Prior pressure
 

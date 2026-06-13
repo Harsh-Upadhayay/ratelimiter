@@ -1,6 +1,9 @@
 package ratelimiter
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 // ErrEmptyKey is returned when the rate limit key is empty.
 var ErrEmptyKey = errors.New("rate limit key is required")
@@ -25,3 +28,5 @@ var ErrInvalidRefillRate = errors.New("refill rate must be greater than 0")
 
 // ErrCASConflict is returned when the limiter cannot commit state after retrying CAS conflicts.
 var ErrCASConflict = errors.New("max number of CAS conflict attempts exhausted")
+
+var ErrInvalidShardCount = fmt.Errorf("shard count must lie between 1 and %d", MAXSHARDSIZE-1)

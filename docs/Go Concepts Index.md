@@ -27,6 +27,8 @@ This hub groups Go language and style concepts used by the rate limiter.
 - [[G31 - Lock Striping]]
 - [[G32 - Key Hashing]]
 - [[G33 - Composition with Pointer Fields]]
+- [[G34 - String to Byte Slice]]
+- [[G35 - Unsigned Modulo Safety]]
 
 ## Time and control flow
 
