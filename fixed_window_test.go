@@ -27,7 +27,7 @@ func TestAllowRejectsAfterLimit(t *testing.T) {
 	if err != nil {
 		t.Fatalf("new fixed window returned error: %v", err)
 	}
-	limiter, err := NewLimiter(algo)
+	limiter, err := newTestLimiter(algo)
 
 	if err != nil {
 		t.Fatalf("new limiter returned error: %v", err)
@@ -67,7 +67,7 @@ func TestAllowTracksUsersIndependently(t *testing.T) {
 	if err != nil {
 		t.Fatalf("new fixed window returned error: %v", err)
 	}
-	limiter, err := NewLimiter(algo)
+	limiter, err := newTestLimiter(algo)
 	if err != nil {
 		t.Fatalf("new limiter returned error: %v", err)
 	}
@@ -105,7 +105,7 @@ func TestAllowResetsAtWindowBoundary(t *testing.T) {
 	if err != nil {
 		t.Fatalf("new fixed window returned error: %v", err)
 	}
-	limiter, err := NewLimiter(algo)
+	limiter, err := newTestLimiter(algo)
 	if err != nil {
 		t.Fatalf("new limiter returned error: %v", err)
 	}
@@ -141,7 +141,7 @@ func TestAllowRejectsBeforeWindowBoundary(t *testing.T) {
 	if err != nil {
 		t.Fatalf("new fixed window returned error: %v", err)
 	}
-	limiter, err := NewLimiter(algo)
+	limiter, err := newTestLimiter(algo)
 	if err != nil {
 		t.Fatalf("new limiter returned error: %v", err)
 	}
@@ -168,7 +168,7 @@ func TestRemainingQuotaCalculation(t *testing.T) {
 	if err != nil {
 		t.Fatalf("new fixed window returned error: %v", err)
 	}
-	limiter, err := NewLimiter(algo)
+	limiter, err := newTestLimiter(algo)
 	if err != nil {
 		t.Fatalf("new limiter returned error: %v", err)
 	}
@@ -207,7 +207,7 @@ func TestRetryAfterCalculation(t *testing.T) {
 	if err != nil {
 		t.Fatalf("new fixed window returned error: %v", err)
 	}
-	limiter, err := NewLimiter(algo)
+	limiter, err := newTestLimiter(algo)
 	if err != nil {
 		t.Fatalf("new limiter returned error: %v", err)
 	}

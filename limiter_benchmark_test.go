@@ -13,7 +13,7 @@ func newFixedWindowLimiter(b *testing.B, limit int, dur time.Duration) *Limiter 
 		b.Fatalf("fixedwindow initialization failed %v", err)
 	}
 
-	lim, err := NewLimiter(fw)
+	lim, err := newTestLimiter(fw)
 	if err != nil {
 		b.Fatalf("limiter initalization failed %v", err)
 	}
@@ -28,7 +28,7 @@ func newTokenBucketLimiter(b *testing.B, capacity int, rate float64) *Limiter {
 		b.Fatalf("tokenbucket initialization failed %v", err)
 	}
 
-	lim, err := NewLimiter(fw)
+	lim, err := newTestLimiter(fw)
 	if err != nil {
 		b.Fatalf("limiter initalization failed %v", err)
 	}

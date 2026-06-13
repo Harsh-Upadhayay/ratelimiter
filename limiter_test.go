@@ -6,9 +6,13 @@ import (
 	"time"
 )
 
+func newTestLimiter(algo algorithm) (*Limiter, error) {
+	return NewLimiter(algo, NewMemoryStore())
+}
+
 func TestEmptyKeyError(t *testing.T) {
 	algo, err := NewFixedWindow(1, time.Minute)
-	limiter, err := NewLimiter(algo)
+	limiter, err := newTestLimiter(algo)
 
 	if err != nil {
 		t.Fatalf("new limiter returned error : %v", err)
@@ -23,7 +27,7 @@ func TestEmptyKeyError(t *testing.T) {
 }
 
 func TestNilAlgorithmError(t *testing.T) {
-	_, err := NewLimiter(nil)
+	_, err := newTestLimiter(nil)
 
 	if !errors.Is(err, ErrNilAlgorithm) {
 		t.Fatalf("limiter created with nil algorithm")
@@ -42,7 +46,7 @@ func TestAllowConcurrentSameKeyFixedWindow(t *testing.T) {
 		t.Fatalf("fixedwindow creation failed with error: %v", err)
 	}
 
-	limiter, err := NewLimiter(fw)
+	limiter, err := newTestLimiter(fw)
 
 	if err != nil {
 		t.Fatalf("limiter creation failed with error: %v", err)
@@ -95,7 +99,7 @@ func TestAllowConcurrentSameKeyTokenBucket(t *testing.T) {
 		t.Fatalf("fixedwindow creation failed with error: %v", err)
 	}
 
-	limiter, err := NewLimiter(tb)
+	limiter, err := newTestLimiter(tb)
 
 	if err != nil {
 		t.Fatalf("limiter creation failed with error: %v", err)
