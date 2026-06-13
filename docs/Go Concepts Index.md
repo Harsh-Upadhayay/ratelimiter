@@ -22,6 +22,11 @@ This hub groups Go language and style concepts used by the rate limiter.
 - [[G04 - Mutexes and Critical Sections]]
 - [[G05 - Defer Unlock Pattern]]
 - [[G26 - Optimistic Concurrency with CAS]]
+- [[G27 - Store Owned Mutexes]]
+- [[G29 - Race Detector]]
+- [[G31 - Lock Striping]]
+- [[G32 - Key Hashing]]
+- [[G33 - Composition with Pointer Fields]]
 
 ## Time and control flow
 
@@ -44,6 +49,11 @@ This hub groups Go language and style concepts used by the rate limiter.
 - [[G20 - Type Assertions]]
 - [[G21 - Constructor Validation Ownership]]
 - [[G22 - Nil Interface Guard]]
+- [[G30 - Exported Interfaces With Unexported Types]]
+
+## Testing and benchmarking
+
+- [[G28 - Go Benchmarks]]
 
 ## Decision hubs
 
@@ -53,3 +63,4 @@ This hub groups Go language and style concepts used by the rate limiter.
 - [[V4 Algorithm Abstraction Index]]
 - [[V5 Token Bucket Design Index]]
 - [[V6 Storage Boundary Index]]
+- [[V7 Sharded MemoryStore Index]]

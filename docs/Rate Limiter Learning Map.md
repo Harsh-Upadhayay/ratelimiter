@@ -80,6 +80,20 @@ This is the Obsidian entry point for the learning version of the rate limiter.
 - [[decisions/D45 - Split Storage from Limiter]]
 - [[decisions/D46 - GetSet Race]]
 - [[decisions/D47 - StateStore Uses Get and CAS]]
+- [[decisions/D48 - Benchmark Before Storage Refactor]]
+- [[decisions/D49 - MemoryStore Owns Runtime State]]
+- [[decisions/D50 - CAS Conflict Is Not Store Error]]
+- [[decisions/D51 - Bounded CAS Retry Loop]]
+- [[decisions/D52 - Default Memory Store Constructor]]
+
+## V7 decisions
+
+- Hub: [[V7 Sharded MemoryStore Index]]
+- [[decisions/D53 - Sharded MemoryStore Next]]
+- [[decisions/D54 - Sharded Store Keeps StateStore Contract]]
+- [[decisions/D55 - Configurable Shard Count]]
+- [[decisions/D56 - Reuse MemoryStore Internally]]
+- [[decisions/D57 - Sharded MemoryStore as Default Backend]]
 
 ## Go practice notes
 
@@ -110,3 +124,10 @@ This is the Obsidian entry point for the learning version of the rate limiter.
 - [[go/G24 - Lazy State Materialization]]
 - [[go/G25 - Package Scope Across Files]]
 - [[go/G26 - Optimistic Concurrency with CAS]]
+- [[go/G27 - Store Owned Mutexes]]
+- [[go/G28 - Go Benchmarks]]
+- [[go/G29 - Race Detector]]
+- [[go/G30 - Exported Interfaces With Unexported Types]]
+- [[go/G31 - Lock Striping]]
+- [[go/G32 - Key Hashing]]
+- [[go/G33 - Composition with Pointer Fields]]

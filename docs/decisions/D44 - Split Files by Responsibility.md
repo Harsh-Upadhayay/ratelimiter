@@ -18,6 +18,8 @@ limiter.go
 fixed_window.go
 token_bucket.go
 errors.go
+state_store.go
+memory_store.go
 ```
 
 ## Ownership
@@ -27,6 +29,8 @@ errors.go
 - `fixed_window.go`: fixed-window config, state, constructor, and decision logic.
 - `token_bucket.go`: token-bucket config, state, constructor, and decision logic.
 - `errors.go`: sentinel errors.
+- `state_store.go`: storage boundary contracts and shared storage record shape.
+- `memory_store.go`: in-memory store implementation for local runtime state.
 
 ## Why
 
@@ -41,4 +45,5 @@ This keeps concrete behavior close to the types that own it while centralizing o
 - [[D15 - One File First]]
 - [[D26 - Introduce Algorithm Interface]]
 - [[D35 - Token Bucket as Second Algorithm]]
+- [[D49 - MemoryStore Owns Runtime State]]
 - [[G25 - Package Scope Across Files]]
