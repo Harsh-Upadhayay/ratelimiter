@@ -46,8 +46,9 @@ clauses, pointer receivers for mutating types, sentinel errors, pure helpers).
 ## Architecture so far (V1 → V7)
 
 - **Package:** `ratelimiter` (module `github.com/Harsh-Upadhayay/ratelimiter`, Go 1.22.2).
-- `Limiter` (`limiter.go`) holds `algo algorithm` + `store StateStore`. `NewLimiter(algo)`
-  builds a default store internally (store injection deliberately deferred — D52).
+- `Limiter` (`limiter.go`) holds `algo algorithm` + `store StateStore`. `NewLimiter(algo, store)`
+  takes both — store injection is open (D59 reversed D52). Tests use `newTestLimiter(t, algo)`
+  which wraps `NewLimiter` with a fresh `MemoryStore`.
 - `Allow(key, now)` does `Get → Decide → CompareAndSwap` in a **bounded CAS retry loop**
   (10 attempts → `ErrCASConflict`). Retry re-runs `Decide`, not just CAS.
 - `algorithm` + `algorithmState` (`types.go`) are **private interfaces**; `algorithmState`

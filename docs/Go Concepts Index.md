@@ -56,6 +56,8 @@ This hub groups Go language and style concepts used by the rate limiter.
 ## Testing and benchmarking
 
 - [[G28 - Go Benchmarks]]
+- [[G36 - Test Helper Pattern]]
+- [[G37 - Contract Testing via Interface Parameter]]
 
 ## Decision hubs
 

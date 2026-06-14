@@ -12,6 +12,9 @@ This hub tracks the move from one memory-store mutex to a sharded in-memory back
 - [[D56 - Reuse MemoryStore Internally]]
 - [[D57 - Sharded MemoryStore as Default Backend]]
 - [[D58 - Trust Internal Invariants]]
+- [[D59 - Store Injection Opened]]
+- [[D60 - Contract Testing for StateStore]]
+- [[D61 - Test Isolation with Fresh Stores]]
 
 ## Prior pressure
 
