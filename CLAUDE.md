@@ -24,8 +24,10 @@ clauses, pointer receivers for mutating types, sentinel errors, pure helpers).
 ## Documentation conventions (keep these up to date as we work)
 
 - **Design decisions** → `docs/decisions/Dxx - Title.md` (numbered, sequential; currently
-  through D62).
+  through D63).
 - **Go concepts** → `docs/go/Gxx - Title.md` (currently through G37).
+- **Redis/Lua concepts** → `docs/redis/Rxx - Title.md` (currently through R07; hub:
+  `docs/Redis Concepts Index.md`).
 - **Version index hubs** → `docs/Vn ... Index.md` linking the decisions/concepts for that
   iteration. Hub-and-spoke notes use `[[wikilinks]]` (Obsidian-style).
 - Master map: `docs/Rate Limiter Learning Map.md`. Full narrative: `docs/Chat Export - Rate
@@ -90,10 +92,17 @@ store is an available backend callers can inject; it is not auto-wired as a defa
 Decision made 2026-06-14: the single-node depth axis (sharding/contention/testing) is near
 its learning ceiling. Next learning lives in **breadth** — the distributed path and the
 sliding-window algorithm family. **D62 is the pivot that reframed this:** Redis is a parallel
-`RedisLimiter`, not a `StateStore`. Open sub-decision still to reason through (Socratically,
-not yet chosen): order of attack — build `RedisLimiter` (Fixed Window / Token Bucket in Lua)
-first, OR add Sliding Window Log/Counter in-process first so the eventual Redis port has a
-real reason to use sorted sets (`ZADD`/`ZREMRANGEBYSCORE`). No code written yet.
+`RedisLimiter`, not a `StateStore`.
+
+Order of attack chosen (D63): **Redis-first** — port Fixed Window into a `RedisLimiter` to
+learn `EVAL`/Lua mechanics on a simple algorithm, before Token Bucket *forces* Lua (read
+tokens + timestamp → compute refill → conditionally deduct → write back). Sliding Window
+Log/Counter (sorted sets, `ZADD`/`ZREMRANGEBYSCORE`) comes later. Redis/Lua concepts are
+logged in `docs/redis/` (R01–R07); the atomicity reasoning lives in
+[[R07 - Levels of Atomicity in Redis]] and [[D63 - Fixed Window in Redis via Lua]]. Lua's
+pessimistic single-shot atomicity replaces the in-process CAS retry loop — the Redis path has
+no `ErrCASConflict`. Hub: `docs/V8 RedisLimiter Design Index.md`. **No `RedisLimiter` code
+written yet.**
 
 ## Known cleanup items (mention when relevant; don't fix unprompted)
 

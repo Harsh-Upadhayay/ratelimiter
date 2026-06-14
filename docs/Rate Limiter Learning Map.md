@@ -100,11 +100,15 @@ This is the Obsidian entry point for the learning version of the rate limiter.
 - [[decisions/D61 - Test Isolation with Fresh Stores]]
 - [[decisions/D62 - Redis as Limiter Not Store]] — **pivot**: revises plan step 4; Redis is a parallel `RedisLimiter`, not a `StateStore`
 
-## V8 direction (breadth over the distributed axis)
+## V8 — RedisLimiter (breadth over the distributed axis)
 
 V7 closed the single-node depth axis. Next learning is breadth: the distributed path and the
 sliding-window algorithm family. Trailhead is [[decisions/D62 - Redis as Limiter Not Store]].
-Open sub-decision (not yet chosen): `RedisLimiter` first vs. Sliding Window Log/Counter first.
+Direction chosen 2026-06-14: **Redis-first**, starting with Fixed Window in Lua.
+
+- Hub: [[V8 RedisLimiter Design Index]]
+- [[decisions/D63 - Fixed Window in Redis via Lua]]
+- Redis/Lua concepts hub: [[Redis Concepts Index]] (R01–R07)
 
 ## Go practice notes
 
