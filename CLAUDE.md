@@ -24,8 +24,8 @@ clauses, pointer receivers for mutating types, sentinel errors, pure helpers).
 ## Documentation conventions (keep these up to date as we work)
 
 - **Design decisions** → `docs/decisions/Dxx - Title.md` (numbered, sequential; currently
-  through D57).
-- **Go concepts** → `docs/go/Gxx - Title.md` (currently through G33).
+  through D62).
+- **Go concepts** → `docs/go/Gxx - Title.md` (currently through G37).
 - **Version index hubs** → `docs/Vn ... Index.md` linking the decisions/concepts for that
   iteration. Hub-and-spoke notes use `[[wikilinks]]` (Obsidian-style).
 - Master map: `docs/Rate Limiter Learning Map.md`. Full narrative: `docs/Chat Export - Rate
@@ -43,12 +43,19 @@ clauses, pointer receivers for mutating types, sentinel errors, pure helpers).
 5. Three more algorithms: Token Bucket, Sliding Window Counter, Sliding Window Log.
 6. Harden: injectable clock, Redis `TIME` for skew, key sharding for hot keys, metrics.
 
-## Architecture so far (V1 → V7)
+> **Plan revised by D62:** step 4's "RedisStore as a `StateStore` backend" was abandoned.
+> `StateStore` is an in-process abstraction (it passes live Go `algorithmState` structs;
+> Redis stores bytes and owns atomicity server-side). Redis becomes a **parallel
+> `RedisLimiter`** implementing `Allow` directly via Lua scripts — NOT a swappable store.
+> So `Limiter` stays in-process only; the distributed path is a separate implementation.
+
+## Architecture so far (V1 → V7, build green)
 
 - **Package:** `ratelimiter` (module `github.com/Harsh-Upadhayay/ratelimiter`, Go 1.22.2).
 - `Limiter` (`limiter.go`) holds `algo algorithm` + `store StateStore`. `NewLimiter(algo, store)`
-  takes both — store injection is open (D59 reversed D52). Tests use `newTestLimiter(t, algo)`
-  which wraps `NewLimiter` with a fresh `MemoryStore`.
+  takes both — store injection is open (D59 reversed D52). Callers pick the backend; there is
+  **no** auto-default to a particular store. Tests use `newTestLimiter(t, algo)` which wraps
+  `NewLimiter` with a fresh `MemoryStore`.
 - `Allow(key, now)` does `Get → Decide → CompareAndSwap` in a **bounded CAS retry loop**
   (10 attempts → `ErrCASConflict`). Retry re-runs `Decide`, not just CAS.
 - `algorithm` + `algorithmState` (`types.go`) are **private interfaces**; `algorithmState`
@@ -61,29 +68,32 @@ clauses, pointer receivers for mutating types, sentinel errors, pure helpers).
   local var). Locks both reads and writes.
 - Algorithms: `FixedWindow` and `TokenBucket` (exported constructors, own their validation).
   Token Bucket: lazy refill, `float64` tokens, clamps backward clock movement.
-- Tests go **through the public API** to preserve refactoring freedom. Benchmarks in
-  `limiter_benchmark_test.go` showed many-key parallel does NOT scale — all keys serialize
-  behind the single `MemoryStore` mutex.
+- `ShardedMemoryStore` (`sharded_memory_store.go`): lock striping over `shards []*MemoryStore`
+  (pointers, so mutex-containing values aren't copied — G33). `NewShardedMemoryStore(shardCount)`
+  validates `1 <= shardCount <= MAXSHARDSIZE` (1000) else `ErrInvalidShardCount` (D55).
+  `shardIndex` uses `hash/fnv` 32a, `% len(shards)` (G32, G34, G35). `Get`/`CompareAndSwap`
+  delegate to `shards[shardIndex(key)]`, reusing `*MemoryStore` (D56). Internal calls trust
+  `shardIndex` — no bounds check (D58).
+- Tests go **through the public API** to preserve refactoring freedom. `StateStore`
+  implementations share one contract-test helper (D60, G37); every test builds a fresh store
+  for isolation (D61, G36). Benchmarks in `limiter_benchmark_test.go` showed many-key parallel
+  does NOT scale on a single `MemoryStore` mutex — the pressure that motivated sharding (D48).
 
-## Current work: V7 — Sharded MemoryStore (IN PROGRESS, does not compile)
+## V7 — Sharded MemoryStore (COMPLETE, build + tests + race all green)
 
-Goal: lock striping to fix the many-key serialization bottleneck. Chosen over per-key lock
-manager and over adding another algorithm (both lower learning value).
+Lock striping fixed the many-key serialization bottleneck. Chosen over per-key lock manager
+and over adding another algorithm (both lower learning value at the time — D53). The sharded
+store is an available backend callers can inject; it is not auto-wired as a default.
 
-- `ShardedMemoryStore { shards []*MemoryStore }` — `[]*MemoryStore` (pointers) so we don't
-  copy mutex-containing values (G33).
-- `NewShardedMemoryStore(shardCount int) (*ShardedMemoryStore, error)` — configurable count,
-  `ErrInvalidShardCount` (already in errors.go) for `<= 0`.
-- `shardIndex(key string) int` via `hash/fnv` (deterministic) — returns an index for
-  testability (G32). `hash.Write`'s `(int, error)` return can be `_, _ =` ignored.
-- `Get`/`CompareAndSwap` delegate to `shards[shardIndex(key)]`, reusing `*MemoryStore` (D56).
-- Then point `NewLimiter`'s default store at the sharded store (D57), e.g. 32 shards.
+## Current direction: V8 — breadth over the distributed axis
 
-**Active blocker:** `sharded_memory_store.go` is half-written (`shardsList := [5]MemoryStore`,
-unused, no return) and fails `go build ./...`. Immediate next step is finishing the
-constructor (build a `[]*MemoryStore` of length `shardCount`), then `shardIndex`, `Get`,
-`CompareAndSwap`. Verify with `go test ./... && go test -race ./...` and the many-key
-benchmarks. Expectation: same-key bench ~flat, many-key parallel improves.
+Decision made 2026-06-14: the single-node depth axis (sharding/contention/testing) is near
+its learning ceiling. Next learning lives in **breadth** — the distributed path and the
+sliding-window algorithm family. **D62 is the pivot that reframed this:** Redis is a parallel
+`RedisLimiter`, not a `StateStore`. Open sub-decision still to reason through (Socratically,
+not yet chosen): order of attack — build `RedisLimiter` (Fixed Window / Token Bucket in Lua)
+first, OR add Sliding Window Log/Counter in-process first so the eventual Redis port has a
+real reason to use sorted sets (`ZADD`/`ZREMRANGEBYSCORE`). No code written yet.
 
 ## Known cleanup items (mention when relevant; don't fix unprompted)
 

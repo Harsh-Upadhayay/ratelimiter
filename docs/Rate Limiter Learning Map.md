@@ -94,6 +94,17 @@ This is the Obsidian entry point for the learning version of the rate limiter.
 - [[decisions/D55 - Configurable Shard Count]]
 - [[decisions/D56 - Reuse MemoryStore Internally]]
 - [[decisions/D57 - Sharded MemoryStore as Default Backend]]
+- [[decisions/D58 - Trust Internal Invariants]]
+- [[decisions/D59 - Store Injection Opened]]
+- [[decisions/D60 - Contract Testing for StateStore]]
+- [[decisions/D61 - Test Isolation with Fresh Stores]]
+- [[decisions/D62 - Redis as Limiter Not Store]] — **pivot**: revises plan step 4; Redis is a parallel `RedisLimiter`, not a `StateStore`
+
+## V8 direction (breadth over the distributed axis)
+
+V7 closed the single-node depth axis. Next learning is breadth: the distributed path and the
+sliding-window algorithm family. Trailhead is [[decisions/D62 - Redis as Limiter Not Store]].
+Open sub-decision (not yet chosen): `RedisLimiter` first vs. Sliding Window Log/Counter first.
 
 ## Go practice notes
 
@@ -131,3 +142,7 @@ This is the Obsidian entry point for the learning version of the rate limiter.
 - [[go/G31 - Lock Striping]]
 - [[go/G32 - Key Hashing]]
 - [[go/G33 - Composition with Pointer Fields]]
+- [[go/G34 - String to Byte Slice]]
+- [[go/G35 - Unsigned Modulo Safety]]
+- [[go/G36 - Test Helper Pattern]]
+- [[go/G37 - Contract Testing via Interface Parameter]]

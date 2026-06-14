@@ -15,6 +15,7 @@ This hub tracks the move from one memory-store mutex to a sharded in-memory back
 - [[D59 - Store Injection Opened]]
 - [[D60 - Contract Testing for StateStore]]
 - [[D61 - Test Isolation with Fresh Stores]]
+- [[D62 - Redis as Limiter Not Store]]
 
 ## Prior pressure
 
