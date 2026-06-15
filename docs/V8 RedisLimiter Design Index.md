@@ -15,6 +15,8 @@ that implements `Allow` directly via Lua scripts, **not** a swappable `StateStor
 ## Decisions
 
 - [[decisions/D63 - Fixed Window in Redis via Lua]]
+- [[decisions/D64 - RedisLimiter Algorithm Interface]] — `RedisLimiter` holds a `Script()`/`Args()`
+  algorithm interface; concrete `RedisFixedWindow` seals the typed params. Both decoupled and type-safe.
 
 ## Redis and Lua concepts
 
@@ -29,5 +31,7 @@ that implements `Allow` directly via Lua scripts, **not** a swappable `StateStor
 
 ## Status
 
-Design and concepts logged. **No `RedisLimiter` code written yet** — next move is implementing
-Fixed Window in Lua behind an `Allow(key, now)` contract.
+Design and concepts logged. **No `RedisLimiter` code written yet** — next move is sketching the
+`redisAlgorithm` interface (`Script()`/`Args()`, D64) and the Fixed Window Lua script behind an
+`Allow(key)` contract. The Redis path drops the caller-supplied `now`: Redis owns the clock via
+`TIME` (no cross-machine clock trust — [[redis/R07 - Levels of Atomicity in Redis]]).

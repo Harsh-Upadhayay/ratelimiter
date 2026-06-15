@@ -1,6 +1,9 @@
 package ratelimiter
 
-import "time"
+import (
+	"context"
+	"time"
+)
 
 // algorithmState is an interface that all algorithm states must implement.
 // It is used to store the state of each key in the Limiter.
@@ -21,4 +24,13 @@ type Result struct {
 	Allowed    bool
 	Remaining  int
 	RetryAfter time.Duration
+}
+
+type redisAlgorithm interface {
+	script() string
+	args() []string
+}
+
+type redisAdapter interface {
+	eval(ctx context.Context, script string, keys []string, args []string) ([]interface{}, error)
 }
