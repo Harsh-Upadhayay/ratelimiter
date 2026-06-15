@@ -32,5 +32,5 @@ type redisAlgorithm interface {
 }
 
 type redisAdapter interface {
-	eval(ctx context.Context, script string, keys []string, args []string) ([]interface{}, error)
+	eval(ctx context.Context, script string, keys []string, args []string) (any, error)
 }

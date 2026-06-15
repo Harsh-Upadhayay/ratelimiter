@@ -108,6 +108,8 @@ Direction chosen 2026-06-14: **Redis-first**, starting with Fixed Window in Lua.
 
 - Hub: [[V8 RedisLimiter Design Index]]
 - [[decisions/D63 - Fixed Window in Redis via Lua]]
+- [[decisions/D64 - RedisLimiter Algorithm Interface]]
+- [[decisions/D65 - Redis Adapter Returns Raw Result]]
 - Redis/Lua concepts hub: [[Redis Concepts Index]] (R01–R07)
 
 ## Go practice notes

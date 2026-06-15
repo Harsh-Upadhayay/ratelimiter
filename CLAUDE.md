@@ -24,8 +24,8 @@ clauses, pointer receivers for mutating types, sentinel errors, pure helpers).
 ## Documentation conventions (keep these up to date as we work)
 
 - **Design decisions** → `docs/decisions/Dxx - Title.md` (numbered, sequential; currently
-  through D63).
-- **Go concepts** → `docs/go/Gxx - Title.md` (currently through G37).
+  through D65).
+- **Go concepts** → `docs/go/Gxx - Title.md` (currently through G38).
 - **Redis/Lua concepts** → `docs/redis/Rxx - Title.md` (currently through R07; hub:
   `docs/Redis Concepts Index.md`).
 - **Version index hubs** → `docs/Vn ... Index.md` linking the decisions/concepts for that
@@ -101,8 +101,13 @@ Log/Counter (sorted sets, `ZADD`/`ZREMRANGEBYSCORE`) comes later. Redis/Lua conc
 logged in `docs/redis/` (R01–R07); the atomicity reasoning lives in
 [[R07 - Levels of Atomicity in Redis]] and [[D63 - Fixed Window in Redis via Lua]]. Lua's
 pessimistic single-shot atomicity replaces the in-process CAS retry loop — the Redis path has
-no `ErrCASConflict`. Hub: `docs/V8 RedisLimiter Design Index.md`. **No `RedisLimiter` code
-written yet.**
+no `ErrCASConflict`. Hub: `docs/V8 RedisLimiter Design Index.md`. Redis skeleton code exists for
+`RedisLimiter`, `RedisFixedWindow`, and `goRedisAdapter`; fixed-window Lua is sketched, but Redis
+execution and result parsing are not fully wired yet.
+
+Decision D65: `goRedisAdapter.eval` should return raw `any`; `RedisLimiter.Allow` owns parsing
+the Lua contract `{allowed, remaining, retryAfterSeconds}` into `Result`. The adapter is Redis I/O
+plumbing, not rate-limiter domain logic.
 
 ## Known cleanup items (mention when relevant; don't fix unprompted)
 

@@ -10,7 +10,11 @@ type goRedisAdapter struct {
 	client *redis.Client
 }
 
-func (a *goRedisAdapter) eval(ctx context.Context, script string, keys []string, args []string) ([]interface{}, error) {
-	// TODO: Implement the logic to evaluate the Lua script using the Redis client.
-	return nil, nil
+func (a *goRedisAdapter) eval(ctx context.Context, script string, keys []string, args []string) (any, error) {
+	redisArgs := make([]any, 0, len(args)) // Current size is 0, but we preallocate len(args) space to it.
+	for _, arg := range args {
+		redisArgs = append(redisArgs, arg)
+	}
+
+	return a.client.Eval(ctx, script, keys, redisArgs...).Result()
 }
