@@ -112,6 +112,8 @@ Direction chosen 2026-06-14: **Redis-first**, starting with Fixed Window in Lua.
 - [[decisions/D65 - Redis Adapter Returns Raw Result]]
 - [[decisions/D66 - Redis Client Ownership Boundary]]
 - [[decisions/D67 - Sealed Redis Algorithms]]
+- [[decisions/D68 - Shared Fixed Window Config]]
+- [[decisions/D69 - Backend Qualified Naming]]
 - Redis/Lua concepts hub: [[Redis Concepts Index]] (R01–R07)
 
 ## Go practice notes
@@ -154,3 +156,5 @@ Direction chosen 2026-06-14: **Redis-first**, starting with Fixed Window in Lua.
 - [[go/G35 - Unsigned Modulo Safety]]
 - [[go/G36 - Test Helper Pattern]]
 - [[go/G37 - Contract Testing via Interface Parameter]]
+- [[go/G38 - context.Context]]
+- [[go/G39 - Go Naming Qualifier Order]]

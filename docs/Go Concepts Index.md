@@ -42,6 +42,7 @@ This hub groups Go language and style concepts used by the rate limiter.
 
 - [[G11 - Multiple Return Values]]
 - [[G12 - Sentinel Errors]]
+- [[G39 - Go Naming Qualifier Order]]
 - [[G14 - Pure Helper Functions]]
 - [[G15 - Public API Tests]]
 - [[G16 - Helper Parameter Ordering]]

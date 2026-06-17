@@ -24,8 +24,8 @@ clauses, pointer receivers for mutating types, sentinel errors, pure helpers).
 ## Documentation conventions (keep these up to date as we work)
 
 - **Design decisions** → `docs/decisions/Dxx - Title.md` (numbered, sequential; currently
-  through D67).
-- **Go concepts** → `docs/go/Gxx - Title.md` (currently through G38).
+  through D69).
+- **Go concepts** → `docs/go/Gxx - Title.md` (currently through G39).
 - **Redis/Lua concepts** → `docs/redis/Rxx - Title.md` (currently through R07; hub:
   `docs/Redis Concepts Index.md`).
 - **Version index hubs** → `docs/Vn ... Index.md` linking the decisions/concepts for that
@@ -115,6 +115,14 @@ owns rate-limiting behavior; the adapter remains an internal test/swap seam.
 
 Decision D67: Redis algorithms are sealed for now. `redisAlgorithm` stays private, so callers use
 package-provided Redis algorithms while the Lua/result contract is still evolving.
+
+Decision D68: share fixed-window policy config/validation between `FixedWindow` and
+`RedisFixedWindow`, but keep execution behavior separate. Stable policy is shared; volatile
+backend execution details stay isolated.
+
+Decision D69: backend-specific concepts use qualifier-first names: `MemoryLimiter`, `RedisLimiter`,
+`MemoryFixedWindow`, `RedisFixedWindow`, etc. Internal sealed interfaces remain lowercase
+(`memoryAlgorithm`, `redisAlgorithm`) unless deliberately opened as public extension points.
 
 ## Known cleanup items (mention when relevant; don't fix unprompted)
 

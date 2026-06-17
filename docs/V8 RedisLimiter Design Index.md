@@ -23,6 +23,10 @@ that implements `Allow` directly via Lua scripts, **not** a swappable `StateStor
   client; private adapter remains an internal seam.
 - [[decisions/D67 - Sealed Redis Algorithms]] — Redis algorithm extension stays private; users use
   package-provided Redis algorithms for now.
+- [[decisions/D68 - Shared Fixed Window Config]] — share stable fixed-window policy config while
+  keeping in-memory and Redis execution separate.
+- [[decisions/D69 - Backend Qualified Naming]] — backend-specific names use qualifier first:
+  `MemoryLimiter`, `RedisLimiter`, `MemoryFixedWindow`, `RedisFixedWindow`.
 
 ## Redis and Lua concepts
 
@@ -40,5 +44,7 @@ that implements `Allow` directly via Lua scripts, **not** a swappable `StateStor
 Design and concepts logged. Redis skeleton code exists for `RedisLimiter`, `RedisFixedWindow`, and
 `goRedisAdapter`; the fixed-window Lua script and raw result parsing are in progress. Redis client
 ownership and sealed Redis algorithms are intentionally decided in [[decisions/D66 - Redis Client Ownership Boundary]]
-and [[decisions/D67 - Sealed Redis Algorithms]]. The Redis path drops the caller-supplied `now`:
-Redis owns the clock via `TIME` (no cross-machine clock trust — [[redis/R07 - Levels of Atomicity in Redis]]).
+and [[decisions/D67 - Sealed Redis Algorithms]]. Fixed-window policy config should be shared per
+[[decisions/D68 - Shared Fixed Window Config]]. Backend-qualified naming is captured in
+[[decisions/D69 - Backend Qualified Naming]]. The Redis path drops the caller-supplied `now`: Redis
+owns the clock via `TIME` (no cross-machine clock trust — [[redis/R07 - Levels of Atomicity in Redis]]).
