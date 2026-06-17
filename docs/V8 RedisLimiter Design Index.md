@@ -19,6 +19,10 @@ that implements `Allow` directly via Lua scripts, **not** a swappable `StateStor
   algorithm interface; concrete `RedisFixedWindow` seals the typed params. Both decoupled and type-safe.
 - [[decisions/D65 - Redis Adapter Returns Raw Result]] — Redis adapter returns `any`; `RedisLimiter.Allow`
   parses the script contract into `Result`.
+- [[decisions/D66 - Redis Client Ownership Boundary]] — public constructor takes an existing Redis
+  client; private adapter remains an internal seam.
+- [[decisions/D67 - Sealed Redis Algorithms]] — Redis algorithm extension stays private; users use
+  package-provided Redis algorithms for now.
 
 ## Redis and Lua concepts
 
@@ -34,7 +38,7 @@ that implements `Allow` directly via Lua scripts, **not** a swappable `StateStor
 ## Status
 
 Design and concepts logged. Redis skeleton code exists for `RedisLimiter`, `RedisFixedWindow`, and
-`goRedisAdapter`; the fixed-window Lua script has been sketched. Next move is wiring
-`goRedisAdapter.eval` as raw Redis execution, then parsing `{allowed, remaining, retryAfterSeconds}`
-inside `RedisLimiter.Allow`. The Redis path drops the caller-supplied `now`: Redis owns the clock
-via `TIME` (no cross-machine clock trust — [[redis/R07 - Levels of Atomicity in Redis]]).
+`goRedisAdapter`; the fixed-window Lua script and raw result parsing are in progress. Redis client
+ownership and sealed Redis algorithms are intentionally decided in [[decisions/D66 - Redis Client Ownership Boundary]]
+and [[decisions/D67 - Sealed Redis Algorithms]]. The Redis path drops the caller-supplied `now`:
+Redis owns the clock via `TIME` (no cross-machine clock trust — [[redis/R07 - Levels of Atomicity in Redis]]).

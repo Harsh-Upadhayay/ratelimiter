@@ -29,4 +29,11 @@ var ErrInvalidRefillRate = errors.New("refill rate must be greater than 0")
 // ErrCASConflict is returned when the limiter cannot commit state after retrying CAS conflicts.
 var ErrCASConflict = errors.New("max number of CAS conflict attempts exhausted")
 
+// ErrInvalidShardCount is returned when the shard count is not between 1 and MAXSHARDSIZE-1.
 var ErrInvalidShardCount = fmt.Errorf("shard count must lie between 1 and %d", MAXSHARDSIZE-1)
+
+// ErrInvalidShardIndex is returned when the shard index is not between 0 and shard count - 1.
+var ErrUnexpectedRedisResult = errors.New("unexpected redis result")
+
+// ErrInvalidShardIndex is returned when the shard index is not between 0 and shard count - 1.
+var ErrNilRedisClient = errors.New("redis client cannot be nil")

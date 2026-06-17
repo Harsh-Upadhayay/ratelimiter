@@ -24,7 +24,7 @@ clauses, pointer receivers for mutating types, sentinel errors, pure helpers).
 ## Documentation conventions (keep these up to date as we work)
 
 - **Design decisions** → `docs/decisions/Dxx - Title.md` (numbered, sequential; currently
-  through D65).
+  through D67).
 - **Go concepts** → `docs/go/Gxx - Title.md` (currently through G38).
 - **Redis/Lua concepts** → `docs/redis/Rxx - Title.md` (currently through R07; hub:
   `docs/Redis Concepts Index.md`).
@@ -108,6 +108,13 @@ execution and result parsing are not fully wired yet.
 Decision D65: `goRedisAdapter.eval` should return raw `any`; `RedisLimiter.Allow` owns parsing
 the Lua contract `{allowed, remaining, retryAfterSeconds}` into `Result`. The adapter is Redis I/O
 plumbing, not rate-limiter domain logic.
+
+Decision D66: public Redis construction should use a caller-owned Redis client, while `redisAdapter`
+and `goRedisAdapter` stay private. The app owns connection lifecycle/configuration; `RedisLimiter`
+owns rate-limiting behavior; the adapter remains an internal test/swap seam.
+
+Decision D67: Redis algorithms are sealed for now. `redisAlgorithm` stays private, so callers use
+package-provided Redis algorithms while the Lua/result contract is still evolving.
 
 ## Known cleanup items (mention when relevant; don't fix unprompted)
 
