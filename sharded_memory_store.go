@@ -28,12 +28,12 @@ func (s *ShardedMemoryStore) shardIndex(key string) int {
 	return int(h.Sum32() % uint32(len(s.shards)))
 }
 
-func (s *ShardedMemoryStore) Get(key string) (algorithmState, int, bool, error) {
+func (s *ShardedMemoryStore) Get(key string) (memoryAlgorithmState, int, bool, error) {
 	idx := s.shardIndex(key)
 	return s.shards[idx].Get(key)
 }
 
-func (s *ShardedMemoryStore) CompareAndSwap(key string, version int, state algorithmState) (bool, error) {
+func (s *ShardedMemoryStore) CompareAndSwap(key string, version int, state memoryAlgorithmState) (bool, error) {
 	idx := s.shardIndex(key)
 	return s.shards[idx].CompareAndSwap(key, version, state)
 }

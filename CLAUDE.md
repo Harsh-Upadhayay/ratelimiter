@@ -46,21 +46,21 @@ clauses, pointer receivers for mutating types, sentinel errors, pure helpers).
 6. Harden: injectable clock, Redis `TIME` for skew, key sharding for hot keys, metrics.
 
 > **Plan revised by D62:** step 4's "RedisStore as a `StateStore` backend" was abandoned.
-> `StateStore` is an in-process abstraction (it passes live Go `algorithmState` structs;
+> `StateStore` is an in-process abstraction (it passes live Go `memoryAlgorithmState` structs;
 > Redis stores bytes and owns atomicity server-side). Redis becomes a **parallel
 > `RedisLimiter`** implementing `Allow` directly via Lua scripts — NOT a swappable store.
-> So `Limiter` stays in-process only; the distributed path is a separate implementation.
+> So `MemoryLimiter` stays in-process only; the distributed path is a separate implementation.
 
 ## Architecture so far (V1 → V7, build green)
 
 - **Package:** `ratelimiter` (module `github.com/Harsh-Upadhayay/ratelimiter`, Go 1.22.2).
-- `Limiter` (`limiter.go`) holds `algo algorithm` + `store StateStore`. `NewLimiter(algo, store)`
+- `MemoryLimiter` (`memory_limiter.go`) holds `algo memoryAlgorithm` + `store StateStore`. `NewMemoryLimiter(algo, store)`
   takes both — store injection is open (D59 reversed D52). Callers pick the backend; there is
-  **no** auto-default to a particular store. Tests use `newTestLimiter(t, algo)` which wraps
-  `NewLimiter` with a fresh `MemoryStore`.
+  **no** auto-default to a particular store. Tests use `newTestMemoryLimiter(t, algo)` which wraps
+  `NewMemoryLimiter` with a fresh `MemoryStore`.
 - `Allow(key, now)` does `Get → Decide → CompareAndSwap` in a **bounded CAS retry loop**
   (10 attempts → `ErrCASConflict`). Retry re-runs `Decide`, not just CAS.
-- `algorithm` + `algorithmState` (`types.go`) are **private interfaces**; `algorithmState`
+- `memoryAlgorithm` + `memoryAlgorithmState` (`types.go`) are **private interfaces**; `memoryAlgorithmState`
   is a marker interface for opaque per-key state. `Result{Allowed, Remaining, RetryAfter}`
   is exported.
 - `StateStore` (`state_store.go`): `Get(key) → (state, version, exists, error)` and
@@ -68,7 +68,7 @@ clauses, pointer receivers for mutating types, sentinel errors, pure helpers).
   is `ok=false, err=nil` (not an error).
 - `MemoryStore` (`memory_store.go`): `map[string]record` + a **field** `sync.Mutex` (not a
   local var). Locks both reads and writes.
-- Algorithms: `FixedWindow` and `TokenBucket` (exported constructors, own their validation).
+- Algorithms: `MemoryFixedWindow` and `MemoryTokenBucket` (exported constructors, own their validation).
   Token Bucket: lazy refill, `float64` tokens, clamps backward clock movement.
 - `ShardedMemoryStore` (`sharded_memory_store.go`): lock striping over `shards []*MemoryStore`
   (pointers, so mutex-containing values aren't copied — G33). `NewShardedMemoryStore(shardCount)`
@@ -116,7 +116,7 @@ owns rate-limiting behavior; the adapter remains an internal test/swap seam.
 Decision D67: Redis algorithms are sealed for now. `redisAlgorithm` stays private, so callers use
 package-provided Redis algorithms while the Lua/result contract is still evolving.
 
-Decision D68: share fixed-window policy config/validation between `FixedWindow` and
+Decision D68: share fixed-window policy config/validation between `MemoryFixedWindow` and
 `RedisFixedWindow`, but keep execution behavior separate. Stable policy is shared; volatile
 backend execution details stay isolated.
 
@@ -126,7 +126,7 @@ Decision D69: backend-specific concepts use qualifier-first names: `MemoryLimite
 
 ## Known cleanup items (mention when relevant; don't fix unprompted)
 
-- `token_bucket_tests.go` is misnamed — Go only compiles `_test.go` files, so this file is
+- `memory_token_bucket_tests.go` is misnamed — Go only compiles `_test.go` files, so this file is
   NOT run as tests. It also has an open `// TODO: Add tests` list (bucket-full start,
   rejection, refill, sub-token, cap, retry-after, backward time).
 
@@ -134,4 +134,4 @@ Decision D69: backend-specific concepts use qualifier-first names: `MemoryLimite
 
 - Build: `go build ./...`
 - Test: `go test ./...` and `go test -race ./...`
-- Benchmarks: `go test -bench=BenchmarkAllow.*FixedWindow -benchmem ./...`
+- Benchmarks: `go test -bench=BenchmarkAllow.*MemoryFixedWindow -benchmem ./...`

@@ -2,7 +2,7 @@ package ratelimiter
 
 import "time"
 
-// fixedWindowState used by the FixedWindow algorithm to
+// fixedWindowState used by the MemoryFixedWindow algorithm to
 // track the start time of the current window and the
 // number of consumed requests within that window.
 type fixedWindowState struct {
@@ -10,43 +10,39 @@ type fixedWindowState struct {
 	consumedRequests int
 }
 
-// isAlgorithmState is a marker method to ensure that
-// fixedWindowState implements the algorithmState interface.
-func (f fixedWindowState) isAlgorithmState() {}
+// isMemoryAlgorithmState is a marker method to ensure that
+// fixedWindowState implements the memoryAlgorithmState interface.
+func (f fixedWindowState) isMemoryAlgorithmState() {}
 
-// FixedWindow implements a fixed window rate limiter algorithm that tracks the
+// MemoryFixedWindow implements a fixed window rate limiter algorithm that tracks the
 // number of requests made by each key within a
 // specified time window. It allows a certain number of requests
 // per window and resets the count when the window expires.
-type FixedWindow struct {
-	requestLimit   int
-	windowDuration time.Duration
+type MemoryFixedWindow struct {
+	config fixedWindowConfig
 }
 
-// NewFixedWindow creates a new FixedWindow with the specified request limit and window duration.
+// NewMemoryFixedWindow creates a new MemoryFixedWindow with the specified request limit and window duration.
 // Returns an error if the request limit is not positive or if the window duration is not positive.
-func NewFixedWindow(requestLimit int, windowDuration time.Duration) (*FixedWindow, error) {
-	if requestLimit <= 0 {
-		return nil, ErrInvalidLimit
-	}
-	if windowDuration <= 0 {
-		return nil, ErrInvalidWindowDuration
+func NewMemoryFixedWindow(requestLimit int, windowDuration time.Duration) (*MemoryFixedWindow, error) {
+	config, err := newFixedWindowConfig(requestLimit, windowDuration)
+	if err != nil {
+		return nil, err
 	}
 
-	return &FixedWindow{
-		requestLimit:   requestLimit,
-		windowDuration: windowDuration,
+	return &MemoryFixedWindow{
+		config: config,
 	}, nil
 }
 
 // Decide applies the fixed-window algorithm for the current state and returns
 // the rate-limit result plus the state that should be stored for the key.
-func (f FixedWindow) Decide(now time.Time, state algorithmState, exists bool) (Result, algorithmState, error) {
+func (f MemoryFixedWindow) Decide(now time.Time, state memoryAlgorithmState, exists bool) (Result, memoryAlgorithmState, error) {
 	if !exists {
 		fwState := fixedWindowState{windowStartTime: now, consumedRequests: 1}
 		return Result{
 			Allowed:    true,
-			Remaining:  f.requestLimit - 1,
+			Remaining:  f.config.requestLimit - 1,
 			RetryAfter: 0,
 		}, fwState, nil
 	}
@@ -57,26 +53,26 @@ func (f FixedWindow) Decide(now time.Time, state algorithmState, exists bool) (R
 		return Result{}, state, ErrUnsupportedAlgorithmState
 	}
 
-	if !fwState.windowStartTime.Add(f.windowDuration).After(now) {
+	if !fwState.windowStartTime.Add(f.config.windowDuration).After(now) {
 		fwState.windowStartTime = now
 		fwState.consumedRequests = 1
 		return Result{
 			Allowed:    true,
-			Remaining:  f.requestLimit - 1,
+			Remaining:  f.config.requestLimit - 1,
 			RetryAfter: 0,
 		}, fwState, nil
 	}
-	if fwState.consumedRequests < f.requestLimit {
+	if fwState.consumedRequests < f.config.requestLimit {
 		fwState.consumedRequests++
 		return Result{
 			Allowed:    true,
-			Remaining:  f.requestLimit - fwState.consumedRequests,
+			Remaining:  f.config.requestLimit - fwState.consumedRequests,
 			RetryAfter: 0,
 		}, fwState, nil
 	}
 	return Result{
 		Allowed:    false,
 		Remaining:  0,
-		RetryAfter: fwState.windowStartTime.Add(f.windowDuration).Sub(now),
+		RetryAfter: fwState.windowStartTime.Add(f.config.windowDuration).Sub(now),
 	}, fwState, nil
 }

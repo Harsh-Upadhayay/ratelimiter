@@ -6,13 +6,13 @@ import (
 	"time"
 )
 
-func newTestLimiter(algo algorithm) (*Limiter, error) {
-	return NewLimiter(algo, NewMemoryStore())
+func newTestMemoryLimiter(algo memoryAlgorithm) (*MemoryLimiter, error) {
+	return NewMemoryLimiter(algo, NewMemoryStore())
 }
 
 func TestEmptyKeyError(t *testing.T) {
-	algo, err := NewFixedWindow(1, time.Minute)
-	limiter, err := newTestLimiter(algo)
+	algo, err := NewMemoryFixedWindow(1, time.Minute)
+	limiter, err := newTestMemoryLimiter(algo)
 
 	if err != nil {
 		t.Fatalf("new limiter returned error : %v", err)
@@ -27,26 +27,26 @@ func TestEmptyKeyError(t *testing.T) {
 }
 
 func TestNilAlgorithmError(t *testing.T) {
-	_, err := newTestLimiter(nil)
+	_, err := newTestMemoryLimiter(nil)
 
 	if !errors.Is(err, ErrNilAlgorithm) {
-		t.Fatalf("limiter created with nil algorithm")
+		t.Fatalf("limiter created with nil memoryAlgorithm")
 	}
 }
 
-func TestAllowConcurrentSameKeyFixedWindow(t *testing.T) {
+func TestAllowConcurrentSameKeyMemoryFixedWindow(t *testing.T) {
 	type allowOutcome struct {
 		allowed bool
 		err     error
 	}
 
-	fw, err := NewFixedWindow(1, time.Minute)
+	fw, err := NewMemoryFixedWindow(1, time.Minute)
 
 	if err != nil {
 		t.Fatalf("fixedwindow creation failed with error: %v", err)
 	}
 
-	limiter, err := newTestLimiter(fw)
+	limiter, err := newTestMemoryLimiter(fw)
 
 	if err != nil {
 		t.Fatalf("limiter creation failed with error: %v", err)
@@ -87,19 +87,19 @@ func TestAllowConcurrentSameKeyFixedWindow(t *testing.T) {
 	}
 }
 
-func TestAllowConcurrentSameKeyTokenBucket(t *testing.T) {
+func TestAllowConcurrentSameKeyMemoryTokenBucket(t *testing.T) {
 	type allowOutcome struct {
 		allowed bool
 		err     error
 	}
 
-	tb, err := NewTokenBucket(1, 1)
+	tb, err := NewMemoryTokenBucket(1, 1)
 
 	if err != nil {
 		t.Fatalf("fixedwindow creation failed with error: %v", err)
 	}
 
-	limiter, err := newTestLimiter(tb)
+	limiter, err := newTestMemoryLimiter(tb)
 
 	if err != nil {
 		t.Fatalf("limiter creation failed with error: %v", err)

@@ -6,14 +6,14 @@ import (
 	"time"
 )
 
-func newFixedWindowLimiter(b *testing.B, limit int, dur time.Duration) *Limiter {
+func newMemoryFixedWindowLimiter(b *testing.B, limit int, dur time.Duration) *MemoryLimiter {
 	b.Helper()
-	fw, err := NewFixedWindow(limit, dur)
+	fw, err := NewMemoryFixedWindow(limit, dur)
 	if err != nil {
 		b.Fatalf("fixedwindow initialization failed %v", err)
 	}
 
-	lim, err := newTestLimiter(fw)
+	lim, err := newTestMemoryLimiter(fw)
 	if err != nil {
 		b.Fatalf("limiter initalization failed %v", err)
 	}
@@ -21,14 +21,14 @@ func newFixedWindowLimiter(b *testing.B, limit int, dur time.Duration) *Limiter 
 	return lim
 }
 
-func newTokenBucketLimiter(b *testing.B, capacity int, rate float64) *Limiter {
+func newMemoryTokenBucketLimiter(b *testing.B, capacity int, rate float64) *MemoryLimiter {
 	b.Helper()
-	fw, err := NewTokenBucket(capacity, rate)
+	fw, err := NewMemoryTokenBucket(capacity, rate)
 	if err != nil {
 		b.Fatalf("tokenbucket initialization failed %v", err)
 	}
 
-	lim, err := newTestLimiter(fw)
+	lim, err := newTestMemoryLimiter(fw)
 	if err != nil {
 		b.Fatalf("limiter initalization failed %v", err)
 	}
@@ -36,8 +36,8 @@ func newTokenBucketLimiter(b *testing.B, capacity int, rate float64) *Limiter {
 	return lim
 }
 
-func BenchmarkAllowSameKeyFixedWindow(b *testing.B) {
-	limiter := newFixedWindowLimiter(b, 1, time.Minute)
+func BenchmarkAllowSameKeyMemoryFixedWindow(b *testing.B) {
+	limiter := newMemoryFixedWindowLimiter(b, 1, time.Minute)
 	now := time.Date(1, time.January, 1, 1, 1, 1, 1, time.UTC)
 	b.ResetTimer()
 
@@ -50,8 +50,8 @@ func BenchmarkAllowSameKeyFixedWindow(b *testing.B) {
 
 }
 
-func BenchmarkAllowSameKeyFixedWindowParallel(b *testing.B) {
-	limiter := newFixedWindowLimiter(b, 1, time.Minute)
+func BenchmarkAllowSameKeyMemoryFixedWindowParallel(b *testing.B) {
+	limiter := newMemoryFixedWindowLimiter(b, 1, time.Minute)
 	now := time.Date(1, time.January, 1, 1, 1, 1, 1, time.UTC)
 	b.ResetTimer()
 
@@ -66,8 +66,8 @@ func BenchmarkAllowSameKeyFixedWindowParallel(b *testing.B) {
 
 }
 
-func BenchmarkAllowManyKeyFixedWindow(b *testing.B) {
-	limiter := newFixedWindowLimiter(b, 10, time.Nanosecond)
+func BenchmarkAllowManyKeyMemoryFixedWindow(b *testing.B) {
+	limiter := newMemoryFixedWindowLimiter(b, 10, time.Nanosecond)
 	now := time.Date(1, time.January, 1, 1, 1, 1, 1, time.UTC)
 
 	keys := make([]string, 1024)
@@ -84,8 +84,8 @@ func BenchmarkAllowManyKeyFixedWindow(b *testing.B) {
 	}
 }
 
-func BenchmarkAllowManyKeyFixedWindowParallel(b *testing.B) {
-	limiter := newFixedWindowLimiter(b, 1, time.Nanosecond)
+func BenchmarkAllowManyKeyMemoryFixedWindowParallel(b *testing.B) {
+	limiter := newMemoryFixedWindowLimiter(b, 1, time.Nanosecond)
 	now := time.Date(1, time.January, 1, 1, 1, 1, 1, time.UTC)
 
 	keys := make([]string, 1024)
@@ -107,8 +107,8 @@ func BenchmarkAllowManyKeyFixedWindowParallel(b *testing.B) {
 
 }
 
-func BenchmarkAllowSameKeyTokenBucket(b *testing.B) {
-	limiter := newTokenBucketLimiter(b, 1, 1)
+func BenchmarkAllowSameKeyMemoryTokenBucket(b *testing.B) {
+	limiter := newMemoryTokenBucketLimiter(b, 1, 1)
 	now := time.Date(1, time.January, 1, 1, 1, 1, 1, time.UTC)
 	b.ResetTimer()
 
@@ -121,8 +121,8 @@ func BenchmarkAllowSameKeyTokenBucket(b *testing.B) {
 
 }
 
-func BenchmarkAllowSameKeyTokenBucketParallel(b *testing.B) {
-	limiter := newTokenBucketLimiter(b, 1, 1)
+func BenchmarkAllowSameKeyMemoryTokenBucketParallel(b *testing.B) {
+	limiter := newMemoryTokenBucketLimiter(b, 1, 1)
 	now := time.Date(1, time.January, 1, 1, 1, 1, 1, time.UTC)
 	b.ResetTimer()
 
@@ -137,8 +137,8 @@ func BenchmarkAllowSameKeyTokenBucketParallel(b *testing.B) {
 
 }
 
-func BenchmarkAllowManyKeyTokenBucket(b *testing.B) {
-	limiter := newTokenBucketLimiter(b, 10, 1)
+func BenchmarkAllowManyKeyMemoryTokenBucket(b *testing.B) {
+	limiter := newMemoryTokenBucketLimiter(b, 10, 1)
 	now := time.Date(1, time.January, 1, 1, 1, 1, 1, time.UTC)
 
 	keys := make([]string, 1024)
@@ -155,8 +155,8 @@ func BenchmarkAllowManyKeyTokenBucket(b *testing.B) {
 	}
 }
 
-func BenchmarkAllowManyKeyTokenBucketParallel(b *testing.B) {
-	limiter := newTokenBucketLimiter(b, 1, 1)
+func BenchmarkAllowManyKeyMemoryTokenBucketParallel(b *testing.B) {
+	limiter := newMemoryTokenBucketLimiter(b, 1, 1)
 	now := time.Date(1, time.January, 1, 1, 1, 1, 1, time.UTC)
 
 	keys := make([]string, 1024)

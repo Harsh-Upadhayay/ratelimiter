@@ -8,7 +8,7 @@ Files in the same directory with the same package name share package scope.
 
 ## Why it matters
 
-Moving `FixedWindow` to `fixed_window.go` and `Limiter` to `limiter.go` does not require exporting internal types as long as both files use `package ratelimiter`.
+Moving `MemoryFixedWindow` to `memory_fixed_window.go` and `MemoryLimiter` to `memory_limiter.go` does not require exporting internal types as long as both files use `package ratelimiter`.
 
 ## Rate limiter use
 

@@ -6,20 +6,16 @@ import (
 )
 
 type RedisFixedWindow struct {
-	limit          int
-	windowDuration time.Duration
+	config fixedWindowConfig
 }
 
 func NewRedisFixedWindow(limit int, windowDuration time.Duration) (*RedisFixedWindow, error) {
-	if limit <= 0 {
-		return nil, ErrInvalidLimit
-	}
-	if windowDuration <= 0 {
-		return nil, ErrInvalidWindowDuration
+	config, err := newFixedWindowConfig(limit, windowDuration)
+	if err != nil {
+		return nil, err
 	}
 	return &RedisFixedWindow{
-		limit:          limit,
-		windowDuration: windowDuration,
+		config: config,
 	}, nil
 }
 
@@ -55,7 +51,7 @@ func (fw *RedisFixedWindow) script() string {
 
 func (fw *RedisFixedWindow) args() []string {
 	args := []string{}
-	args = append(args, strconv.Itoa(fw.limit))
-	args = append(args, strconv.Itoa(int(fw.windowDuration.Seconds())))
+	args = append(args, strconv.Itoa(fw.config.requestLimit))
+	args = append(args, strconv.Itoa(int(fw.config.windowDuration.Seconds())))
 	return args
 }

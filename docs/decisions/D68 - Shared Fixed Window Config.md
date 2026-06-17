@@ -7,7 +7,7 @@ Back to [[V8 RedisLimiter Design Index]].
 After adding `RedisFixedWindow`, the project has two implementations of the same fixed-window
 policy:
 
-- `FixedWindow` — in-process Go execution through `Decide`.
+- `MemoryFixedWindow` — in-process Go execution through `Decide`.
 - `RedisFixedWindow` — Redis/Lua execution through `script()` and `args()`.
 
 Both need the same policy configuration:
@@ -21,7 +21,7 @@ But they execute that policy through different substrates.
 
 ## Design question
 
-Should one `FixedWindow` type implement both the in-memory behavior and the Redis Lua behavior?
+Should one fixed-window type implement both the in-memory behavior and the Redis Lua behavior?
 
 ## Options
 
@@ -43,7 +43,7 @@ fixedWindowConfig
   requestLimit
   windowDuration
 
-FixedWindow
+MemoryFixedWindow
   config fixedWindowConfig
   Decide(...)
 
@@ -83,7 +83,7 @@ Sharing config avoids small duplication without making the pure Go algorithm kno
 - **Latency:** no meaningful difference; field access through config is trivial.
 - **Concurrency:** no direct difference; execution guarantees remain backend-specific.
 - **Maintainability:** validation becomes consistent across in-memory and Redis fixed window.
-- **Boundary clarity:** better than one cross-backend `FixedWindow` type because Redis execution
+- **Boundary clarity:** better than one cross-backend fixed-window type because Redis execution
   remains isolated.
 - **Complexity:** adds one private config type and constructor.
 

@@ -9,10 +9,10 @@ A test helper is a function that does setup or assertions shared across multiple
 ## Shape
 
 ```go
-func newTestLimiter(t *testing.T, algo algorithm) *Limiter {
+func newTestMemoryLimiter(t *testing.T, algo memoryAlgorithm) *MemoryLimiter {
     t.Helper()
     store := NewMemoryStore()
-    lim, err := NewLimiter(algo, store)
+    lim, err := NewMemoryLimiter(algo, store)
     if err != nil {
         t.Fatalf("failed to create limiter: %v", err)
     }
@@ -20,7 +20,7 @@ func newTestLimiter(t *testing.T, algo algorithm) *Limiter {
 }
 ```
 
-- Unexported (`newTestLimiter`, not `NewTestLimiter`) — test helpers are not public API.
+- Unexported (`newTestMemoryLimiter`, not `NewTestMemoryLimiter`) — test helpers are not public API.
 - Returns the value directly, not `(value, error)` — the helper owns error handling via `t.Fatal`.
 - `t.Helper()` marks this frame so stack traces skip it and point to the test that called it.
 

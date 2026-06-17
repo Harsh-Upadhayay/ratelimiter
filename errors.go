@@ -17,7 +17,7 @@ var ErrInvalidWindowDuration = errors.New("window duration must be greater than 
 // ErrUnsupportedAlgorithmState is returned when the algorithm receives a state that it doesn't recognize.
 var ErrUnsupportedAlgorithmState = errors.New("unsupported algorithm state passed to the algorithm")
 
-// ErrNilAlgorithm is returned when trying to create a Limiter with a nil algorithm.
+// ErrNilAlgorithm is returned when trying to create a MemoryLimiter with a nil algorithm.
 var ErrNilAlgorithm = errors.New("algorithm cannot be nil")
 
 // ErrInvalidCapacity is returned when the capacity is not greater than 0.

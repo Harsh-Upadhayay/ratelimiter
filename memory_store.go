@@ -13,7 +13,7 @@ func NewMemoryStore() *MemoryStore {
 	}
 }
 
-func (s *MemoryStore) Get(key string) (algorithmState, int, bool, error) {
+func (s *MemoryStore) Get(key string) (memoryAlgorithmState, int, bool, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -26,7 +26,7 @@ func (s *MemoryStore) Get(key string) (algorithmState, int, bool, error) {
 	return rec.state, rec.version, true, nil
 }
 
-func (s *MemoryStore) CompareAndSwap(key string, version int, state algorithmState) (bool, error) {
+func (s *MemoryStore) CompareAndSwap(key string, version int, state memoryAlgorithmState) (bool, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 

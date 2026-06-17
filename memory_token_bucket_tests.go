@@ -5,12 +5,12 @@ import (
 )
 
 func TestInvalidCapacityError(t *testing.T) {
-	_, err := NewTokenBucket(0, 5)
+	_, err := NewMemoryTokenBucket(0, 5)
 
 	if err != ErrInvalidCapacity {
 		t.Fatalf("Bucket created with 0 capacity")
 	}
-	_, err = NewTokenBucket(-1, 5)
+	_, err = NewMemoryTokenBucket(-1, 5)
 
 	if err != ErrInvalidCapacity {
 		t.Fatalf("Bucket created with negative capacity")
@@ -18,12 +18,12 @@ func TestInvalidCapacityError(t *testing.T) {
 }
 
 func TestInvalidRefillRateError(t *testing.T) {
-	_, err := NewTokenBucket(5, 0)
+	_, err := NewMemoryTokenBucket(5, 0)
 
 	if err != ErrInvalidRefillRate {
 		t.Fatalf("bucket created with 0 rate")
 	}
-	_, err = NewTokenBucket(4, -1)
+	_, err = NewMemoryTokenBucket(4, -1)
 
 	if err != ErrInvalidRefillRate {
 		t.Fatalf("bucket created with negative refill rate")

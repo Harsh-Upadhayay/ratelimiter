@@ -46,7 +46,7 @@ Everything else is *derived* from a root via `context.WithTimeout` / `context.Wi
 `context.Background()` — that would silently impose "wait forever" on every caller and rob them of
 the cancellation decision they alone can make correctly ([[D62 - Redis as Limiter Not Store]]).
 
-This diverges from the in-process `Limiter.Allow(key, now)`, which does no I/O and takes no `ctx` —
+This diverges from the in-process `MemoryLimiter.Allow(key, now)`, which does no I/O and takes no `ctx` —
 a real gap to reconcile if/when a unified `RateLimiter` interface is revisited (see
 [[D64 - RedisLimiter Algorithm Interface]]).
 
