@@ -27,6 +27,14 @@ that implements `Allow` directly via Lua scripts, **not** a swappable `StateStor
   keeping in-memory and Redis execution separate.
 - [[decisions/D69 - Backend Qualified Naming]] — backend-specific names use qualifier first:
   `MemoryLimiter`, `RedisLimiter`, `MemoryFixedWindow`, `RedisFixedWindow`.
+- [[decisions/D70 - Redis Token Bucket Scaled Integer State]] — Redis Token Bucket stores scaled
+  integer token units in a hash to preserve partial refill progress without float state.
+- [[decisions/D71 - Redis Token Bucket Time and TTL Policy]] — Redis `TIME` owns the clock; TTL is
+  full-refill idle cleanup and is refreshed on every script call.
+- [[decisions/D72 - Redis Token Bucket Result Contract]] — Redis algorithms keep returning
+  `{allowed, remaining, retryAfterSeconds}`; token bucket floors remaining and ceilings retry-after.
+- [[decisions/D73 - Redis Token Bucket Scaling Boundary]] — scaling stays inside `RedisTokenBucket`
+  and its Lua script, not in `RedisLimiter` or the public API.
 
 ## Redis and Lua concepts
 
@@ -37,14 +45,19 @@ that implements `Allow` directly via Lua scripts, **not** a swappable `StateStor
 - [[redis/R05 - KEYS and ARGV Parameters]]
 - [[redis/R06 - SET with NX and EX Flags]]
 - [[redis/R07 - Levels of Atomicity in Redis]]
+- [[redis/R08 - Redis Hashes and HMGET]]
+- [[redis/R09 - Redis TIME and Unit Conversion]]
+- [[redis/R10 - Lua Scripts Embedded in Go Strings]]
+- [[redis/R11 - Redis Token Bucket Arithmetic]]
 - Hub: [[Redis Concepts Index]]
 
 ## Status
 
-Design and concepts logged. Redis skeleton code exists for `RedisLimiter`, `RedisFixedWindow`, and
-`goRedisAdapter`; the fixed-window Lua script and raw result parsing are in progress. Redis client
-ownership and sealed Redis algorithms are intentionally decided in [[decisions/D66 - Redis Client Ownership Boundary]]
-and [[decisions/D67 - Sealed Redis Algorithms]]. Fixed-window policy config should be shared per
-[[decisions/D68 - Shared Fixed Window Config]]. Backend-qualified naming is captured in
-[[decisions/D69 - Backend Qualified Naming]]. The Redis path drops the caller-supplied `now`: Redis
-owns the clock via `TIME` (no cross-machine clock trust — [[redis/R07 - Levels of Atomicity in Redis]]).
+Design and concepts logged. Redis skeleton code exists for `RedisLimiter`, `RedisFixedWindow`,
+`RedisTokenBucket`, and `goRedisAdapter`. Redis client ownership and sealed Redis algorithms are
+intentionally decided in [[decisions/D66 - Redis Client Ownership Boundary]] and
+[[decisions/D67 - Sealed Redis Algorithms]]. Backend-qualified naming is captured in
+[[decisions/D69 - Backend Qualified Naming]]. Redis Token Bucket uses scaled integer units in a hash
+([[decisions/D70 - Redis Token Bucket Scaled Integer State]]) and Redis `TIME` for server-owned clock
+state ([[decisions/D71 - Redis Token Bucket Time and TTL Policy]]). The arithmetic note for reviewing
+integer scaling, refill math, and float tradeoffs is [[redis/R11 - Redis Token Bucket Arithmetic]].

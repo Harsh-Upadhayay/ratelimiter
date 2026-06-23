@@ -24,9 +24,9 @@ clauses, pointer receivers for mutating types, sentinel errors, pure helpers).
 ## Documentation conventions (keep these up to date as we work)
 
 - **Design decisions** → `docs/decisions/Dxx - Title.md` (numbered, sequential; currently
-  through D69).
-- **Go concepts** → `docs/go/Gxx - Title.md` (currently through G39).
-- **Redis/Lua concepts** → `docs/redis/Rxx - Title.md` (currently through R07; hub:
+  through D73).
+- **Go concepts** → `docs/go/Gxx - Title.md` (currently through G40).
+- **Redis/Lua concepts** → `docs/redis/Rxx - Title.md` (currently through R11; hub:
   `docs/Redis Concepts Index.md`).
 - **Version index hubs** → `docs/Vn ... Index.md` linking the decisions/concepts for that
   iteration. Hub-and-spoke notes use `[[wikilinks]]` (Obsidian-style).
@@ -123,6 +123,15 @@ backend execution details stay isolated.
 Decision D69: backend-specific concepts use qualifier-first names: `MemoryLimiter`, `RedisLimiter`,
 `MemoryFixedWindow`, `RedisFixedWindow`, etc. Internal sealed interfaces remain lowercase
 (`memoryAlgorithm`, `redisAlgorithm`) unless deliberately opened as public extension points.
+
+Decisions D70-D73: Redis Token Bucket stores scaled integer token units in a Redis hash
+(`tokens`, `last_refill_ms`) using package-level unexported `tokenScale = 1000`. Redis `TIME`
+owns the script clock; TTL is full-refill idle cleanup and is refreshed on every script call.
+Redis algorithms keep the common Lua result shape `{allowed, remaining, retryAfterSeconds}`;
+token bucket floors `remaining` to whole tokens and ceilings `RetryAfter` to seconds. Scaling is
+allowed inside `RedisTokenBucket` and its Lua script, but must not leak into `RedisLimiter`,
+`Result`, or caller-facing API. The focused arithmetic review note is
+`docs/redis/R11 - Redis Token Bucket Arithmetic.md`.
 
 ## Known cleanup items (mention when relevant; don't fix unprompted)
 

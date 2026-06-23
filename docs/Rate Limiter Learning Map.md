@@ -114,7 +114,11 @@ Direction chosen 2026-06-14: **Redis-first**, starting with Fixed Window in Lua.
 - [[decisions/D67 - Sealed Redis Algorithms]]
 - [[decisions/D68 - Shared Fixed Window Config]]
 - [[decisions/D69 - Backend Qualified Naming]]
-- Redis/Lua concepts hub: [[Redis Concepts Index]] (R01–R07)
+- [[decisions/D70 - Redis Token Bucket Scaled Integer State]]
+- [[decisions/D71 - Redis Token Bucket Time and TTL Policy]]
+- [[decisions/D72 - Redis Token Bucket Result Contract]]
+- [[decisions/D73 - Redis Token Bucket Scaling Boundary]]
+- Redis/Lua concepts hub: [[Redis Concepts Index]] (R01-R11)
 
 ## Go practice notes
 
@@ -158,3 +162,4 @@ Direction chosen 2026-06-14: **Redis-first**, starting with Fixed Window in Lua.
 - [[go/G37 - Contract Testing via Interface Parameter]]
 - [[go/G38 - context.Context]]
 - [[go/G39 - Go Naming Qualifier Order]]
+- [[go/G40 - Unexported Package Constants]]
