@@ -24,8 +24,8 @@ clauses, pointer receivers for mutating types, sentinel errors, pure helpers).
 ## Documentation conventions (keep these up to date as we work)
 
 - **Design decisions** → `docs/decisions/Dxx - Title.md` (numbered, sequential; currently
-  through D73).
-- **Go concepts** → `docs/go/Gxx - Title.md` (currently through G40).
+  through D79).
+- **Go concepts** → `docs/go/Gxx - Title.md` (currently through G45).
 - **Redis/Lua concepts** → `docs/redis/Rxx - Title.md` (currently through R11; hub:
   `docs/Redis Concepts Index.md`).
 - **Version index hubs** → `docs/Vn ... Index.md` linking the decisions/concepts for that
@@ -132,6 +132,18 @@ token bucket floors `remaining` to whole tokens and ceilings `RetryAfter` to sec
 allowed inside `RedisTokenBucket` and its Lua script, but must not leak into `RedisLimiter`,
 `Result`, or caller-facing API. The focused arithmetic review note is
 `docs/redis/R11 - Redis Token Bucket Arithmetic.md`.
+
+## Current direction: V9 — HTTP middleware
+
+V9 turns the limiter into an HTTP request-path integration. The public middleware name should be
+behavior-oriented, such as `RateLimitingMiddleware`, not `RedisMiddleware`. This naming does not
+force a fully generic limiter interface immediately; it only keeps Redis out of the middleware's
+public behavior name.
+
+Decisions D74-D79 capture the current shape: HTTP middleware next, whole-middleware failure policy,
+caller-provided `KeyFunc`, status-and-headers-only responses, functional options, and behavior
+named middleware. Go concepts G41-G45 capture `net/http` middleware, functional options, `iota`
+enum-like constants, function callback types, and `ResponseWriter` header/status behavior.
 
 ## Known cleanup items (mention when relevant; don't fix unprompted)
 

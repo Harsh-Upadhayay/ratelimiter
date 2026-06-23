@@ -44,6 +44,9 @@ This hub groups Go language and style concepts used by the rate limiter.
 - [[G12 - Sentinel Errors]]
 - [[G39 - Go Naming Qualifier Order]]
 - [[G40 - Unexported Package Constants]]
+- [[G42 - Functional Options]]
+- [[G43 - Iota Enum Pattern]]
+- [[G44 - Function Types as Callbacks]]
 - [[G14 - Pure Helper Functions]]
 - [[G15 - Public API Tests]]
 - [[G16 - Helper Parameter Ordering]]
@@ -54,6 +57,11 @@ This hub groups Go language and style concepts used by the rate limiter.
 - [[G21 - Constructor Validation Ownership]]
 - [[G22 - Nil Interface Guard]]
 - [[G30 - Exported Interfaces With Unexported Types]]
+
+## HTTP integration
+
+- [[G41 - net-http Middleware Pattern]]
+- [[G45 - HTTP ResponseWriter Headers]]
 
 ## Testing and benchmarking
 
@@ -70,3 +78,4 @@ This hub groups Go language and style concepts used by the rate limiter.
 - [[V5 Token Bucket Design Index]]
 - [[V6 Storage Boundary Index]]
 - [[V7 Sharded MemoryStore Index]]
+- [[V9 HTTP Middleware Index]]

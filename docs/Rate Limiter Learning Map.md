@@ -120,6 +120,19 @@ Direction chosen 2026-06-14: **Redis-first**, starting with Fixed Window in Lua.
 - [[decisions/D73 - Redis Token Bucket Scaling Boundary]]
 - Redis/Lua concepts hub: [[Redis Concepts Index]] (R01-R11)
 
+## V9 — HTTP Middleware
+
+V9 turns the limiter from a library into an HTTP request-path integration. The public middleware
+name is behavior-oriented (`RateLimitingMiddleware`), not Redis-oriented.
+
+- Hub: [[V9 HTTP Middleware Index]]
+- [[decisions/D74 - HTTP Middleware Boundary]]
+- [[decisions/D75 - Middleware Failure Policy]]
+- [[decisions/D76 - Caller Provided Key Function]]
+- [[decisions/D77 - Rate Limit HTTP Headers]]
+- [[decisions/D78 - Functional Options for Middleware]]
+- [[decisions/D79 - Behavior Named Middleware]]
+
 ## Go practice notes
 
 - Hub: [[Go Concepts Index]]
@@ -163,3 +176,8 @@ Direction chosen 2026-06-14: **Redis-first**, starting with Fixed Window in Lua.
 - [[go/G38 - context.Context]]
 - [[go/G39 - Go Naming Qualifier Order]]
 - [[go/G40 - Unexported Package Constants]]
+- [[go/G41 - net-http Middleware Pattern]]
+- [[go/G42 - Functional Options]]
+- [[go/G43 - Iota Enum Pattern]]
+- [[go/G44 - Function Types as Callbacks]]
+- [[go/G45 - HTTP ResponseWriter Headers]]
