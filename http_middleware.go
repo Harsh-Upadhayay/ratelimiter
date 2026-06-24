@@ -62,6 +62,9 @@ func NewMiddleware(limiter Limiter, keyFunc KeyFunc, opts ...MiddlewareOption) (
 }
 
 func (m *Middleware) Wrap(next http.Handler) http.Handler {
+	if next == nil {
+		panic("ratelimiter: nil next handler")
+	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		key := m.keyFunc(r)
 
