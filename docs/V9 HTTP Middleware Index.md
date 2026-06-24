@@ -40,7 +40,10 @@ HTTP request -> extract rate-limit key -> call limiter -> status code and header
 
 ## Current direction
 
-Use a behavior-oriented public name such as `RateLimitingMiddleware`, not `RedisMiddleware`.
+- Checkpoint: [[checkpoints/C09 - V9 HTTP Middleware Checkpoint]]
+
+Use a behavior-oriented public API. Because the package is `ratelimiter`, the current type name is
+`Middleware`, not `RateLimitingMiddleware` or `RedisMiddleware`.
 
 The middleware's job is HTTP behavior:
 

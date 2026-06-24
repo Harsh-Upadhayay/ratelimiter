@@ -12,13 +12,21 @@ backend.
 
 ## Decision
 
-Use behavior-oriented naming:
+Use behavior-oriented naming and avoid backend-oriented names.
+
+Because the package is already named `ratelimiter`, the public API can avoid stutter:
 
 ```text
-RateLimitingMiddleware
+ratelimiter.Middleware
+ratelimiter.NewMiddleware(...)
 ```
 
-Avoid public middleware names that contain `Redis`.
+This is preferred over:
+
+```text
+ratelimiter.RateLimitingMiddleware
+ratelimiter.RedisMiddleware
+```
 
 ## Why
 
@@ -29,7 +37,7 @@ The middleware's public behavior is HTTP rate limiting:
 - pass or reject,
 - set headers.
 
-Redis is an implementation detail of the limiter dependency, not the purpose of the middleware.
+Redis is an implementation detail of the limiter dependency, not the purpose of the middleware. The package name already supplies the rate-limiter context.
 
 ## Important boundary
 
@@ -45,7 +53,7 @@ small middleware-facing interface later.
 
 ## Tradeoff
 
-- **API clarity:** better for users; they are adding rate limiting, not Redis.
+- **API clarity:** better for users; they import `ratelimiter` and use `Middleware` without repeating the package concept.
 - **Backend flexibility:** better later; the name does not need to change if memory or another
   backend is supported.
 - **Risk:** a generic name can overpromise backend-agnostic behavior before the abstraction exists.

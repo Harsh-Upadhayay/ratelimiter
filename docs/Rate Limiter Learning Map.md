@@ -123,9 +123,10 @@ Direction chosen 2026-06-14: **Redis-first**, starting with Fixed Window in Lua.
 ## V9 — HTTP Middleware
 
 V9 turns the limiter from a library into an HTTP request-path integration. The public middleware
-name is behavior-oriented (`RateLimitingMiddleware`), not Redis-oriented.
+API is behavior-oriented and package-qualified (`ratelimiter.Middleware`), not Redis-oriented.
 
 - Hub: [[V9 HTTP Middleware Index]]
+- Checkpoint: [[checkpoints/C09 - V9 HTTP Middleware Checkpoint]]
 - [[decisions/D74 - HTTP Middleware Boundary]]
 - [[decisions/D75 - Middleware Failure Policy]]
 - [[decisions/D76 - Caller Provided Key Function]]

@@ -135,16 +135,20 @@ allowed inside `RedisTokenBucket` and its Lua script, but must not leak into `Re
 
 ## Current direction: V9 — HTTP middleware
 
-V9 turns the limiter into an HTTP request-path integration. The public middleware name should be
-behavior-oriented, such as `RateLimitingMiddleware`, not `RedisMiddleware`. This naming does not
-force a fully generic limiter interface immediately; it only keeps Redis out of the middleware's
-public behavior name.
+V9 turns the limiter into an HTTP request-path integration. The public middleware API is
+behavior-oriented and package-qualified: `ratelimiter.Middleware` / `ratelimiter.NewMiddleware`,
+not `RedisMiddleware`. This naming does not force a fully generic limiter interface immediately; it
+only keeps Redis out of the middleware's public behavior name.
 
 Decisions D74-D82 capture the current shape: HTTP middleware next, whole-middleware failure policy,
 caller-provided `KeyFunc`, status-and-headers-only responses, functional options, and behavior
 named middleware. Required middleware dependencies (`Limiter`, `KeyFunc`) are explicit constructor parameters; functional options are reserved for optional settings like failure policy. Fail-open is silent pass-through; delegate-on-error is deferred. `Retry-After` stays as `time.Duration` in Go and is converted to ceiling seconds only at the HTTP boundary. Go concepts G41-G49 capture `net/http` middleware, functional options, `iota`
 enum-like constants, function callback types, `ResponseWriter` header/status behavior, and method
 sets for interface satisfaction.
+
+Checkpoint: `docs/checkpoints/C09 - V9 HTTP Middleware Checkpoint.md`. Deferred branches: middleware
+tests, observability, local HTTP example server, sliding window algorithms, memory adapter for
+`Limiter`, delegate-on-error policy, and Redis integration/runtime tests.
 
 ## Known cleanup items (mention when relevant; don't fix unprompted)
 
