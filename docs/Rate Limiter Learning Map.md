@@ -137,6 +137,10 @@ API is behavior-oriented and package-qualified (`ratelimiter.Middleware`), not R
 - [[decisions/D81 - Fail Open Is Silent Pass Through]]
 - [[decisions/D82 - HTTP Retry After Converts Duration to Seconds]]
 
+## Assessment
+
+- [[current_assessment]] — 2026-06-24 interview/résumé readiness: sysdesign gaps, Go concept strengths, and the `MemoryLimiter`/`Limiter` interface fork
+
 ## Go practice notes
 
 - Hub: [[Go Concepts Index]]

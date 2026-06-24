@@ -53,6 +53,7 @@ func NewMiddleware(limiter Limiter, keyFunc KeyFunc, opts ...MiddlewareOption) (
 
 	for _, o := range opts {
 		o(mw)
+
 	}
 
 	if !(mw.failurePolicy == FailOpen || mw.failurePolicy == FailClosed) {
