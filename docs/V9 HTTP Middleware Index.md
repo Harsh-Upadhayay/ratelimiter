@@ -22,6 +22,9 @@ HTTP request -> extract rate-limit key -> call limiter -> status code and header
 - [[decisions/D77 - Rate Limit HTTP Headers]]
 - [[decisions/D78 - Functional Options for Middleware]]
 - [[decisions/D79 - Behavior Named Middleware]]
+- [[decisions/D80 - Required Dependencies Outside Functional Options]]
+- [[decisions/D81 - Fail Open Is Silent Pass Through]]
+- [[decisions/D82 - HTTP Retry After Converts Duration to Seconds]]
 
 ## Go concepts
 
@@ -30,6 +33,10 @@ HTTP request -> extract rate-limit key -> call limiter -> status code and header
 - [[go/G43 - Iota Enum Pattern]]
 - [[go/G44 - Function Types as Callbacks]]
 - [[go/G45 - HTTP ResponseWriter Headers]]
+- [[go/G46 - Method Sets and Interface Satisfaction]]
+- [[go/G47 - Functional Options on Runtime Structs]]
+- [[go/G48 - Ceiling Duration Conversion]]
+- [[go/G49 - http HandlerFunc Adapter]]
 
 ## Current direction
 

@@ -31,7 +31,7 @@ On rejection, return:
 Retry-After: <seconds>
 ```
 
-`Retry-After` should be rounded up to seconds so a sub-second wait does not become `0`.
+`Retry-After` should be rounded up to seconds so a sub-second wait does not become `0`. The conversion is owned by the HTTP middleware boundary; `Result.RetryAfter` remains a `time.Duration`.
 
 ## Why
 
@@ -49,5 +49,7 @@ The middleware should not impose JSON, plain text, or any other body format on t
 ## Links
 
 - [[D21 - Result Contract]]
+- [[D82 - HTTP Retry After Converts Duration to Seconds]]
 - [[G23 - Duration Seconds Conversion]]
+- [[G48 - Ceiling Duration Conversion]]
 - [[G45 - HTTP ResponseWriter Headers]]

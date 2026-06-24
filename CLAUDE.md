@@ -24,8 +24,8 @@ clauses, pointer receivers for mutating types, sentinel errors, pure helpers).
 ## Documentation conventions (keep these up to date as we work)
 
 - **Design decisions** → `docs/decisions/Dxx - Title.md` (numbered, sequential; currently
-  through D79).
-- **Go concepts** → `docs/go/Gxx - Title.md` (currently through G45).
+  through D82).
+- **Go concepts** → `docs/go/Gxx - Title.md` (currently through G49).
 - **Redis/Lua concepts** → `docs/redis/Rxx - Title.md` (currently through R11; hub:
   `docs/Redis Concepts Index.md`).
 - **Version index hubs** → `docs/Vn ... Index.md` linking the decisions/concepts for that
@@ -140,10 +140,11 @@ behavior-oriented, such as `RateLimitingMiddleware`, not `RedisMiddleware`. This
 force a fully generic limiter interface immediately; it only keeps Redis out of the middleware's
 public behavior name.
 
-Decisions D74-D79 capture the current shape: HTTP middleware next, whole-middleware failure policy,
+Decisions D74-D82 capture the current shape: HTTP middleware next, whole-middleware failure policy,
 caller-provided `KeyFunc`, status-and-headers-only responses, functional options, and behavior
-named middleware. Go concepts G41-G45 capture `net/http` middleware, functional options, `iota`
-enum-like constants, function callback types, and `ResponseWriter` header/status behavior.
+named middleware. Required middleware dependencies (`Limiter`, `KeyFunc`) are explicit constructor parameters; functional options are reserved for optional settings like failure policy. Fail-open is silent pass-through; delegate-on-error is deferred. `Retry-After` stays as `time.Duration` in Go and is converted to ceiling seconds only at the HTTP boundary. Go concepts G41-G49 capture `net/http` middleware, functional options, `iota`
+enum-like constants, function callback types, `ResponseWriter` header/status behavior, and method
+sets for interface satisfaction.
 
 ## Known cleanup items (mention when relevant; don't fix unprompted)
 

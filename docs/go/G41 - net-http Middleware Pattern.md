@@ -26,6 +26,16 @@ The wrapper can inspect the request, decide whether to stop, or call:
 next.ServeHTTP(w, r)
 ```
 
+## HandlerFunc adapter
+
+For simple handlers, Go provides `http.HandlerFunc`, which turns a plain function with this shape:
+
+```go
+func(http.ResponseWriter, *http.Request)
+```
+
+into an `http.Handler`. See [[G49 - http HandlerFunc Adapter]].
+
 ## In this project
 
 The rate-limiting middleware sits before the application handler:
@@ -52,3 +62,4 @@ Use middleware when the behavior is cross-cutting:
 
 - [[D74 - HTTP Middleware Boundary]]
 - [[D79 - Behavior Named Middleware]]
+- [[G49 - http HandlerFunc Adapter]]

@@ -34,6 +34,15 @@ If the key function returns an empty key, the middleware returns:
 400 Bad Request
 ```
 
+## Constructor shape
+
+Because `KeyFunc` is mandatory, it is passed directly to the middleware constructor, not through a
+functional option.
+
+```go
+NewMiddleware(limiter, keyFunc, opts...)
+```
+
 ## Why
 
 Key choice is application-owned. The middleware should not pretend that IP address, headers, or auth

@@ -33,7 +33,7 @@ middleware should fail.
 - `429`: limiter is healthy and says this key is over the limit.
 - `503`: limiter infrastructure failed and this middleware chose fail-closed.
 
-Fail-open protects availability. Fail-closed protects enforcement.
+Fail-open protects availability. Fail-closed protects enforcement. Fail-open is silent pass-through; it does not notify the downstream handler that the limiter failed. See [[D81 - Fail Open Is Silent Pass Through]].
 
 ## Scope
 
@@ -52,5 +52,6 @@ groups later.
 ## Links
 
 - [[D74 - HTTP Middleware Boundary]]
+- [[D81 - Fail Open Is Silent Pass Through]]
 - [[G43 - Iota Enum Pattern]]
 - [[G21 - Constructor Validation Ownership]]

@@ -56,3 +56,4 @@ small middleware-facing interface later.
 - [[D69 - Backend Qualified Naming]]
 - [[D74 - HTTP Middleware Boundary]]
 - [[D78 - Functional Options for Middleware]]
+- [[G46 - Method Sets and Interface Satisfaction]]

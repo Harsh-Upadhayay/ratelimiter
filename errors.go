@@ -32,8 +32,14 @@ var ErrCASConflict = errors.New("max number of CAS conflict attempts exhausted")
 // ErrInvalidShardCount is returned when the shard count is not between 1 and MAXSHARDSIZE-1.
 var ErrInvalidShardCount = fmt.Errorf("shard count must lie between 1 and %d", MAXSHARDSIZE-1)
 
-// ErrInvalidShardIndex is returned when the shard index is not between 0 and shard count - 1.
+// ErrUnexpectedRedisResult is returned when Redis returns a value that does not match the limiter result contract.
 var ErrUnexpectedRedisResult = errors.New("unexpected redis result")
 
-// ErrInvalidShardIndex is returned when the shard index is not between 0 and shard count - 1.
+// ErrNilRedisClient is returned when creating a RedisLimiter with a nil Redis client.
 var ErrNilRedisClient = errors.New("redis client cannot be nil")
+
+var ErrNilLimiter = errors.New("limiter cannot be nil")
+
+var ErrNilKeyFunc = errors.New("key func cannot be nil")
+
+var ErrInvalidFailurePolicy = errors.New("failure policy is invalid")

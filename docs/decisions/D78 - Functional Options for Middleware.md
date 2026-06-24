@@ -4,58 +4,69 @@ Back to [[V9 HTTP Middleware Index]].
 
 ## Context
 
-The middleware needs configuration:
+The middleware has two required dependencies and one optional policy:
 
-- key extraction function,
-- failure policy.
+- required limiter behavior,
+- required key extraction function,
+- optional failure policy.
 
-The user already understands config structs and chose to learn the functional-options pattern.
+The user already understands config structs and chose to learn the functional-options pattern, but
+we later clarified that functional options should not hide required dependencies.
 
 ## Decision
 
-Use functional options for middleware construction.
+Use functional options only for optional middleware configuration.
 
-Conceptually:
-
-```go
-NewRateLimitingMiddleware(limiter, WithKeyFunc(fn), WithFailurePolicy(FailOpen))
-```
-
-Options should be plain mutators:
+Required values stay as explicit constructor parameters:
 
 ```go
-type MiddlewareOption func(*middlewareConfig)
+NewMiddleware(limiter, keyFunc, WithFailurePolicy(FailClosed))
 ```
 
-The constructor applies all options and then validates the final config.
+Optional settings use named option functions:
+
+```go
+type MiddlewareOption func(*Middleware)
+```
+
+For this middleware, options can mutate the partially built `*Middleware` directly. A separate
+private config struct would duplicate the runtime object because the runtime fields and config fields
+are currently the same.
 
 ## Required and default values
 
-`KeyFunc` is required. If no key function is provided, constructor returns an error.
+`Limiter` is required. If it is nil, constructor returns an error.
+
+`KeyFunc` is required. If it is nil, constructor returns an error.
 
 `FailurePolicy` defaults to `FailOpen`, but can be changed with an option.
 
-Invalid failure policy values are rejected by constructor validation.
+Invalid failure policy values are rejected by constructor validation after options are applied.
 
 ## Why
 
-Functional options teach a common Go API pattern:
+Functional options are useful for optional configuration and named overrides. Required constructor
+dependencies should stay visible at the call site.
 
-- defaults live in the constructor,
-- optional settings are readable at the call site,
-- future settings can be added without changing the constructor signature.
+This keeps the API honest:
+
+```text
+required behavior -> constructor parameters
+optional tuning   -> functional options
+```
 
 ## Tradeoff
 
-- **Readability:** good at call sites once the pattern is understood.
-- **Extensibility:** better than positional constructor parameters.
-- **Complexity:** more moving pieces than a config struct.
-- **Validation:** final constructor validation is still required for missing required fields and
-  invalid enum-like values.
+- **Readability:** required dependencies are obvious; optional policy remains named.
+- **Extensibility:** future optional middleware behavior can use more options.
+- **Complexity:** lower than using both `Middleware` and a duplicate `middlewareConfig`.
+- **Validation:** constructor still owns final validation after applying options.
 
 ## Links
 
 - [[D75 - Middleware Failure Policy]]
 - [[D76 - Caller Provided Key Function]]
+- [[D80 - Required Dependencies Outside Functional Options]]
 - [[G42 - Functional Options]]
+- [[G47 - Functional Options on Runtime Structs]]
 - [[G21 - Constructor Validation Ownership]]

@@ -16,16 +16,6 @@ type memoryAlgorithm interface {
 	Decide(now time.Time, state memoryAlgorithmState, exists bool) (Result, memoryAlgorithmState, error)
 }
 
-// Result represents the outcome of a rate limit check,
-// including whether the request is allowed,
-// how many requests are remaining in the current window,
-// and how long to wait before retrying if the limit has been exceeded.
-type Result struct {
-	Allowed    bool
-	Remaining  int
-	RetryAfter time.Duration
-}
-
 type fixedWindowConfig struct {
 	requestLimit   int
 	windowDuration time.Duration

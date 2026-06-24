@@ -15,6 +15,7 @@ This hub groups Go language and style concepts used by the rate limiter.
 
 - [[G03 - Pointer Receivers]]
 - [[G09 - Method Receivers]]
+- [[G46 - Method Sets and Interface Satisfaction]]
 - [[G07 - Do Not Copy Mutexes]]
 
 ## Concurrency
@@ -35,6 +36,7 @@ This hub groups Go language and style concepts used by the rate limiter.
 - [[G06 - Time and Duration Boundaries]]
 - [[G10 - Early Returns and Guard Clauses]]
 - [[G23 - Duration Seconds Conversion]]
+- [[G48 - Ceiling Duration Conversion]]
 - [[G24 - Lazy State Materialization]]
 - [[G25 - Package Scope Across Files]]
 
@@ -45,6 +47,7 @@ This hub groups Go language and style concepts used by the rate limiter.
 - [[G39 - Go Naming Qualifier Order]]
 - [[G40 - Unexported Package Constants]]
 - [[G42 - Functional Options]]
+- [[G47 - Functional Options on Runtime Structs]]
 - [[G43 - Iota Enum Pattern]]
 - [[G44 - Function Types as Callbacks]]
 - [[G14 - Pure Helper Functions]]
@@ -61,6 +64,7 @@ This hub groups Go language and style concepts used by the rate limiter.
 ## HTTP integration
 
 - [[G41 - net-http Middleware Pattern]]
+- [[G49 - http HandlerFunc Adapter]]
 - [[G45 - HTTP ResponseWriter Headers]]
 
 ## Testing and benchmarking
