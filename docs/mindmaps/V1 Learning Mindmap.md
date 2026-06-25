@@ -75,12 +75,12 @@ mindmap
 
 ## Linked notes
 
-- [[D01 - Fixed Window First]]
-- [[D04 - One Global Mutex]]
-- [[D05 - Explicit Time Input]]
-- [[D09 - Defer Unlock After Lock]]
-- [[D10 - Return Type]]
-- [[D19 - Result and Error Return]]
-- [[D20 - Generic Rate Limit Key]]
-- [[D21 - Result Contract]]
-- [[D22 - Sentinel Error for Empty Key]]
+- [[V1 - Fixed Window#ADR-0001 — Fixed window first|ADR-0001]]
+- [[V1 - Fixed Window#ADR-0004 — One global mutex|ADR-0004]]
+- [[V1 - Fixed Window#ADR-0005 — Explicit time input|ADR-0005]]
+- [[V1 - Fixed Window#ADR-0009 — Defer unlock immediately after lock|ADR-0009]]
+- [[V1 - Fixed Window#ADR-0010 — Boolean return for V1|ADR-0010]]
+- [[V2 - API Evolution#ADR-0019 — Result-and-error return|ADR-0019]]
+- [[V2 - API Evolution#ADR-0020 — Generic rate-limit key|ADR-0020]]
+- [[V2 - API Evolution#ADR-0021 — `Result` contract|ADR-0021]]
+- [[V2 - API Evolution#ADR-0022 — Sentinel error for empty key|ADR-0022]]

@@ -15,7 +15,7 @@ RedisLimiter    Allow(ctx context.Context, key string)   // satisfies Limiter
 MemoryLimiter   Allow(key string, now time.Time)         // does NOT satisfy Limiter
 ```
 
-The middleware calls `m.limiter.Allow(r.Context(), key)`, so today only `RedisLimiter` can go through the middleware. The deferred "memory adapter for `Limiter`" task is papering over a genuine philosophical fork: `RedisLimiter` threads `context` because it does I/O; `MemoryLimiter` threads an injected clock because it is pure. This is the most interview-revealing design decision left in the project — it isn't just labor, it's an architectural choice. See [[decisions/D62 - Redis as Limiter Not Store]] for the earlier pivot that set up this fork.
+The middleware calls `m.limiter.Allow(r.Context(), key)`, so today only `RedisLimiter` can go through the middleware. The deferred "memory adapter for `Limiter`" task is papering over a genuine philosophical fork: `RedisLimiter` threads `context` because it does I/O; `MemoryLimiter` threads an injected clock because it is pure. This is the most interview-revealing design decision left in the project — it isn't just labor, it's an architectural choice. See [[V7 - Sharded MemoryStore#ADR-0062 — Redis as a limiter, not a store (pivot)|ADR-0062]] for the earlier pivot that set up this fork.
 
 ---
 

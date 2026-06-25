@@ -23,15 +23,28 @@ clauses, pointer receivers for mutating types, sentinel errors, pure helpers).
 
 ## Documentation conventions (keep these up to date as we work)
 
-- **Design decisions** → `docs/decisions/Dxx - Title.md` (numbered, sequential; currently
-  through D85).
-- **Go concepts** → `docs/go/Gxx - Title.md` (currently through G52).
-- **Redis/Lua concepts** → `docs/redis/Rxx - Title.md` (currently through R11; hub:
-  `docs/Redis Concepts Index.md`).
-- **Version index hubs** → `docs/Vn ... Index.md` linking the decisions/concepts for that
-  iteration. Hub-and-spoke notes use `[[wikilinks]]` (Obsidian-style).
-- Master map: `docs/Rate Limiter Learning Map.md`. Full narrative: `docs/Chat Export - Rate
-  Limiter Learning Session.md`.
+Docs were consolidated 2026-06-25 from 165 atomic files (one note per file became unreadable)
+into ADR logs + concept docs. Everything uses `[[wikilinks]]` (Obsidian-style):
+
+- **ADRs** (`docs/adr/Vn - Title.md`) — architecture decisions `ADR-0001` … `ADR-0085` in
+  standard Nygard format (**Status / Context / Decision / Consequences**), grouped one log per
+  iteration (V1–V9), each opening with a narrative intro. ADR number == the old decision number
+  (ADR-0038 was D38). Index: `docs/adr/README.md` (table of all ADRs + status). Currently
+  through ADR-0085. Checkpoints (old C04/C09/C10) are folded into the end of their version log.
+- **Concepts** (`docs/concepts/`) — `Go Concepts.md` (G-notes, through the old G52) and
+  `Redis Concepts.md` (R-notes, through the old R11), condensed into themed prose. Each concept
+  names the ADR(s) it supports.
+- **Adding a decision**: append an `## ADR-00NN — Title` section (Status/Context/Decision/
+  Consequences) to the **current** version log, add a row to `adr/README.md`, and refresh that
+  log's narrative intro if needed. To reverse a past decision, add a new ADR and set the old
+  one's status to `Superseded by 00NN`. Do **not** create a new file per decision. Start a new
+  log only when a new version (V10+) begins.
+- **Adding a concept**: append to the relevant theme section of `Go Concepts.md` /
+  `Redis Concepts.md`, referencing the ADR(s) that use it.
+- Cross-reference decisions inline as plain `ADR-00NN`; navigation lives in `adr/README.md`.
+  Concept docs and ADR logs link each other with `[[wikilinks]]`.
+- Master map / entry point: `docs/Rate Limiter Learning Map.md`. Full narrative:
+  `docs/Chat Export - Rate Limiter Learning Session.md`.
 - `plan.md` = the north-star 6-step target plan.
 
 ## The 6-step target plan (from plan.md)
