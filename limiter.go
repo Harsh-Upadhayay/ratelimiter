@@ -18,3 +18,7 @@ type Result struct {
 	Remaining  int
 	RetryAfter time.Duration
 }
+
+// Compile-time assertions to ensure that MemoryLimiter and RedisLimiter implement the Limiter interface.
+var _ Limiter = (*MemoryLimiter)(nil) // Convert the value nill to the type *MemoryLimiter: (T)(v) converts v to T.
+var _ Limiter = (*RedisLimiter)(nil)

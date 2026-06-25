@@ -25,6 +25,9 @@ HTTP request -> extract rate-limit key -> call limiter -> status code and header
 - [[decisions/D80 - Required Dependencies Outside Functional Options]]
 - [[decisions/D81 - Fail Open Is Silent Pass Through]]
 - [[decisions/D82 - HTTP Retry After Converts Duration to Seconds]]
+- [[decisions/D83 - MemoryLimiter Implements Limiter via Private Clock]]
+- [[decisions/D84 - Benchmarks Use Production Clock]]
+- [[decisions/D85 - Hot Key CAS Exhaustion Is Expected]]
 
 ## Go concepts
 
@@ -37,10 +40,14 @@ HTTP request -> extract rate-limit key -> call limiter -> status code and header
 - [[go/G47 - Functional Options on Runtime Structs]]
 - [[go/G48 - Ceiling Duration Conversion]]
 - [[go/G49 - http HandlerFunc Adapter]]
+- [[go/G50 - Compile-Time Interface Assertion]]
+- [[go/G51 - Interface Narrows the Method Set]]
+- [[go/G52 - go test Compiles the Whole Package]]
 
 ## Current direction
 
 - Checkpoint: [[checkpoints/C09 - V9 HTTP Middleware Checkpoint]]
+- Checkpoint: [[checkpoints/C10 - MemoryLimiter Implements Limiter Checkpoint]]
 
 Use a behavior-oriented public API. Because the package is `ratelimiter`, the current type name is
 `Middleware`, not `RateLimitingMiddleware` or `RedisMiddleware`.

@@ -1,6 +1,7 @@
 package ratelimiter
 
 import (
+	"context"
 	"errors"
 	"testing"
 	"time"
@@ -27,15 +28,13 @@ func TestAllowRejectsAfterLimit(t *testing.T) {
 	if err != nil {
 		t.Fatalf("new fixed window returned error: %v", err)
 	}
-	limiter, err := newTestMemoryLimiter(algo)
+	limiter, _, err := newTestMemoryLimiter(algo)
 
 	if err != nil {
 		t.Fatalf("new limiter returned error: %v", err)
 	}
 
-	now := time.Date(1, time.January, 1, 1, 1, 1, 1, time.UTC)
-
-	result, err := limiter.Allow("key-1", now)
+	result, err := limiter.Allow(context.Background(), "key-1")
 	if err != nil {
 		t.Fatalf("allow returned error: %v", err)
 	}
@@ -44,7 +43,7 @@ func TestAllowRejectsAfterLimit(t *testing.T) {
 		t.Fatalf("request within limit was rejected")
 	}
 
-	result, err = limiter.Allow("key-1", now)
+	result, err = limiter.Allow(context.Background(), "key-1")
 	if err != nil {
 		t.Fatalf("allow returned error: %v", err)
 	}
@@ -52,7 +51,7 @@ func TestAllowRejectsAfterLimit(t *testing.T) {
 		t.Fatalf("request within limit was rejected")
 	}
 
-	result, err = limiter.Allow("key-1", now)
+	result, err = limiter.Allow(context.Background(), "key-1")
 	if err != nil {
 		t.Fatalf("allow returned error: %v", err)
 	}
@@ -67,13 +66,12 @@ func TestAllowTracksUsersIndependently(t *testing.T) {
 	if err != nil {
 		t.Fatalf("new fixed window returned error: %v", err)
 	}
-	limiter, err := newTestMemoryLimiter(algo)
+	limiter, _, err := newTestMemoryLimiter(algo)
 	if err != nil {
 		t.Fatalf("new limiter returned error: %v", err)
 	}
-	now := time.Date(1, time.January, 1, 1, 1, 1, 1, time.UTC)
 
-	result, err := limiter.Allow("key-1", now)
+	result, err := limiter.Allow(context.Background(), "key-1")
 	if err != nil {
 		t.Fatalf("allow returned error: %v", err)
 	}
@@ -81,7 +79,7 @@ func TestAllowTracksUsersIndependently(t *testing.T) {
 	if !result.Allowed {
 		t.Fatalf("request within limit was rejected")
 	}
-	result, err = limiter.Allow("key-1", now)
+	result, err = limiter.Allow(context.Background(), "key-1")
 	if err != nil {
 		t.Fatalf("allow returned error: %v", err)
 	}
@@ -90,7 +88,7 @@ func TestAllowTracksUsersIndependently(t *testing.T) {
 		t.Fatalf("request over limit was allowed")
 	}
 
-	result, err = limiter.Allow("key-2", now)
+	result, err = limiter.Allow(context.Background(), "key-2")
 	if err != nil {
 		t.Fatalf("allow returned error: %v", err)
 	}
@@ -105,13 +103,12 @@ func TestAllowResetsAtWindowBoundary(t *testing.T) {
 	if err != nil {
 		t.Fatalf("new fixed window returned error: %v", err)
 	}
-	limiter, err := newTestMemoryLimiter(algo)
+	limiter, clk, err := newTestMemoryLimiter(algo)
 	if err != nil {
 		t.Fatalf("new limiter returned error: %v", err)
 	}
-	now := time.Date(1, time.January, 1, 1, 1, 1, 1, time.UTC)
 
-	result, err := limiter.Allow("key-1", now)
+	result, err := limiter.Allow(context.Background(), "key-1")
 	if err != nil {
 		t.Fatalf("allow returned error: %v", err)
 	}
@@ -119,15 +116,15 @@ func TestAllowResetsAtWindowBoundary(t *testing.T) {
 		t.Fatalf("request within limit was rejected")
 	}
 
-	result, err = limiter.Allow("key-1", now)
+	result, err = limiter.Allow(context.Background(), "key-1")
 	if err != nil {
 		t.Fatalf("allow returned error: %v", err)
 	}
 	if result.Allowed {
 		t.Fatalf("request over limit was allowed")
 	}
-
-	result, err = limiter.Allow("key-1", now.Add(time.Minute))
+	clk.advance(time.Minute)
+	result, err = limiter.Allow(context.Background(), "key-1")
 	if err != nil {
 		t.Fatalf("allow returned error: %v", err)
 	}
@@ -141,20 +138,19 @@ func TestAllowRejectsBeforeWindowBoundary(t *testing.T) {
 	if err != nil {
 		t.Fatalf("new fixed window returned error: %v", err)
 	}
-	limiter, err := newTestMemoryLimiter(algo)
+	limiter, clk, err := newTestMemoryLimiter(algo)
 	if err != nil {
 		t.Fatalf("new limiter returned error: %v", err)
 	}
-	now := time.Date(1, time.January, 1, 1, 1, 1, 1, time.UTC)
-
-	result, err := limiter.Allow("key-1", now)
+	result, err := limiter.Allow(context.Background(), "key-1")
 	if err != nil {
 		t.Fatalf("allow returned error: %v", err)
 	}
 	if !result.Allowed {
 		t.Fatalf("request within limit was rejected")
 	}
-	result, err = limiter.Allow("key-1", now.Add(time.Minute-time.Nanosecond))
+	clk.advance(time.Minute - time.Nanosecond)
+	result, err = limiter.Allow(context.Background(), "key-1")
 	if err != nil {
 		t.Fatalf("allow returned error: %v", err)
 	}
@@ -168,13 +164,12 @@ func TestRemainingQuotaCalculation(t *testing.T) {
 	if err != nil {
 		t.Fatalf("new fixed window returned error: %v", err)
 	}
-	limiter, err := newTestMemoryLimiter(algo)
+	limiter, _, err := newTestMemoryLimiter(algo)
 	if err != nil {
 		t.Fatalf("new limiter returned error: %v", err)
 	}
-	now := time.Date(1, time.January, 1, 1, 1, 1, 1, time.UTC)
 
-	result, err := limiter.Allow("key-1", now)
+	result, err := limiter.Allow(context.Background(), "key-1")
 	if err != nil {
 		t.Fatalf("allow returned error: %v", err)
 	}
@@ -183,7 +178,7 @@ func TestRemainingQuotaCalculation(t *testing.T) {
 		t.Fatalf("expected remaining limit of 1 != %v ", result.Remaining)
 	}
 
-	result, err = limiter.Allow("key-1", now)
+	result, err = limiter.Allow(context.Background(), "key-1")
 	if err != nil {
 		t.Fatalf("allow returned error: %v", err)
 	}
@@ -192,7 +187,7 @@ func TestRemainingQuotaCalculation(t *testing.T) {
 		t.Fatalf("expected remaining limit of 0 != %v ", result.Remaining)
 	}
 
-	result, err = limiter.Allow("key-1", now)
+	result, err = limiter.Allow(context.Background(), "key-1")
 	if err != nil {
 		t.Fatalf("allow returned error: %v", err)
 	}
@@ -207,13 +202,12 @@ func TestRetryAfterCalculation(t *testing.T) {
 	if err != nil {
 		t.Fatalf("new fixed window returned error: %v", err)
 	}
-	limiter, err := newTestMemoryLimiter(algo)
+	limiter, _, err := newTestMemoryLimiter(algo)
 	if err != nil {
 		t.Fatalf("new limiter returned error: %v", err)
 	}
-	now := time.Date(1, time.January, 1, 1, 1, 1, 1, time.UTC)
 
-	result, err := limiter.Allow("key-1", now)
+	result, err := limiter.Allow(context.Background(), "key-1")
 	if err != nil {
 		t.Fatalf("allow returned error: %v", err)
 	}
@@ -222,7 +216,7 @@ func TestRetryAfterCalculation(t *testing.T) {
 		t.Fatalf("expected retry-after of 0 != %v ", result.RetryAfter)
 	}
 
-	result, err = limiter.Allow("key-1", now)
+	result, err = limiter.Allow(context.Background(), "key-1")
 	if err != nil {
 		t.Fatalf("allow returned error: %v", err)
 	}

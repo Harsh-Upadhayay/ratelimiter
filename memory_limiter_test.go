@@ -1,25 +1,30 @@
 package ratelimiter
 
 import (
+	"context"
 	"errors"
 	"testing"
 	"time"
 )
 
-func newTestMemoryLimiter(algo memoryAlgorithm) (*MemoryLimiter, error) {
-	return NewMemoryLimiter(algo, NewMemoryStore())
+func newTestMemoryLimiter(algo memoryAlgorithm) (*MemoryLimiter, *testClock, error) {
+	ml, err := NewMemoryLimiter(algo, NewMemoryStore())
+	if err != nil {
+		return nil, nil, err
+	}
+	fakeClock := &testClock{t: time.Date(1, time.January, 1, 1, 1, 1, 1, time.UTC)}
+	ml.clock = fakeClock
+	return ml, fakeClock, err
 }
-
 func TestEmptyKeyError(t *testing.T) {
 	algo, err := NewMemoryFixedWindow(1, time.Minute)
-	limiter, err := newTestMemoryLimiter(algo)
+	limiter, _, err := newTestMemoryLimiter(algo)
 
 	if err != nil {
 		t.Fatalf("new limiter returned error : %v", err)
 	}
 
-	now := time.Date(1, time.January, 1, 1, 1, 1, 1, time.UTC)
-	_, err = limiter.Allow("", now)
+	_, err = limiter.Allow(context.Background(), "")
 
 	if !errors.Is(err, ErrEmptyKey) {
 		t.Fatalf("empty key allowed in limiter.Allow")
@@ -27,7 +32,7 @@ func TestEmptyKeyError(t *testing.T) {
 }
 
 func TestNilAlgorithmError(t *testing.T) {
-	_, err := newTestMemoryLimiter(nil)
+	_, _, err := newTestMemoryLimiter(nil)
 
 	if !errors.Is(err, ErrNilAlgorithm) {
 		t.Fatalf("limiter created with nil memoryAlgorithm")
@@ -46,7 +51,7 @@ func TestAllowConcurrentSameKeyMemoryFixedWindow(t *testing.T) {
 		t.Fatalf("fixedwindow creation failed with error: %v", err)
 	}
 
-	limiter, err := newTestMemoryLimiter(fw)
+	limiter, _, err := newTestMemoryLimiter(fw)
 
 	if err != nil {
 		t.Fatalf("limiter creation failed with error: %v", err)
@@ -54,11 +59,10 @@ func TestAllowConcurrentSameKeyMemoryFixedWindow(t *testing.T) {
 
 	outcomes := make(chan allowOutcome, 100)
 	goroutines := 100
-	now := time.Date(1, time.January, 1, 1, 1, 1, 1, time.UTC)
 
 	for range goroutines {
 		go func() {
-			result, err := limiter.Allow("key-1", now)
+			result, err := limiter.Allow(context.Background(), "key-1")
 			outcomes <- allowOutcome{allowed: result.Allowed, err: err}
 		}()
 	}
@@ -99,7 +103,7 @@ func TestAllowConcurrentSameKeyMemoryTokenBucket(t *testing.T) {
 		t.Fatalf("fixedwindow creation failed with error: %v", err)
 	}
 
-	limiter, err := newTestMemoryLimiter(tb)
+	limiter, _, err := newTestMemoryLimiter(tb)
 
 	if err != nil {
 		t.Fatalf("limiter creation failed with error: %v", err)
@@ -107,11 +111,10 @@ func TestAllowConcurrentSameKeyMemoryTokenBucket(t *testing.T) {
 
 	outcomes := make(chan allowOutcome, 100)
 	goroutines := 100
-	now := time.Date(1, time.January, 1, 1, 1, 1, 1, time.UTC)
 
 	for range goroutines {
 		go func() {
-			result, err := limiter.Allow("key-1", now)
+			result, err := limiter.Allow(context.Background(), "key-1")
 			outcomes <- allowOutcome{allowed: result.Allowed, err: err}
 		}()
 	}

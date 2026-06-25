@@ -24,8 +24,8 @@ clauses, pointer receivers for mutating types, sentinel errors, pure helpers).
 ## Documentation conventions (keep these up to date as we work)
 
 - **Design decisions** → `docs/decisions/Dxx - Title.md` (numbered, sequential; currently
-  through D82).
-- **Go concepts** → `docs/go/Gxx - Title.md` (currently through G49).
+  through D85).
+- **Go concepts** → `docs/go/Gxx - Title.md` (currently through G52).
 - **Redis/Lua concepts** → `docs/redis/Rxx - Title.md` (currently through R11; hub:
   `docs/Redis Concepts Index.md`).
 - **Version index hubs** → `docs/Vn ... Index.md` linking the decisions/concepts for that
@@ -58,8 +58,14 @@ clauses, pointer receivers for mutating types, sentinel errors, pure helpers).
   takes both — store injection is open (D59 reversed D52). Callers pick the backend; there is
   **no** auto-default to a particular store. Tests use `newTestMemoryLimiter(t, algo)` which wraps
   `NewMemoryLimiter` with a fresh `MemoryStore`.
-- `Allow(key, now)` does `Get → Decide → CompareAndSwap` in a **bounded CAS retry loop**
-  (10 attempts → `ErrCASConflict`). Retry re-runs `Decide`, not just CAS.
+- `Allow(ctx, key)` does `Get → Decide → CompareAndSwap` in a **bounded CAS retry loop**
+  (10 attempts → `ErrCASConflict`). Retry re-runs `Decide`, not just CAS. As of D83
+  `MemoryLimiter` satisfies the `Limiter` interface **directly** (no adapter): `Allow` dropped the
+  `now` parameter for a **private, non-injectable `clock`** (`realClock` default; symmetric with
+  `RedisLimiter` owning Redis `TIME`). `ctx` is honored via one `ctx.Err()` check; `now` is sampled
+  per CAS attempt. Compile-time assertions `var _ Limiter = (*MemoryLimiter)(nil)` /
+  `(*RedisLimiter)(nil)` live in `limiter.go`. Under sustained single-key contention the CAS loop
+  can legitimately return `ErrCASConflict` (hot-key problem, D85); benchmarks tolerate it.
 - `memoryAlgorithm` + `memoryAlgorithmState` (`types.go`) are **private interfaces**; `memoryAlgorithmState`
   is a marker interface for opaque per-key state. `Result{Allowed, Remaining, RetryAfter}`
   is exported.
@@ -146,9 +152,12 @@ named middleware. Required middleware dependencies (`Limiter`, `KeyFunc`) are ex
 enum-like constants, function callback types, `ResponseWriter` header/status behavior, and method
 sets for interface satisfaction.
 
-Checkpoint: `docs/checkpoints/C09 - V9 HTTP Middleware Checkpoint.md`. Deferred branches: middleware
-tests, observability, local HTTP example server, sliding window algorithms, memory adapter for
-`Limiter`, delegate-on-error policy, and Redis integration/runtime tests.
+Checkpoints: `docs/checkpoints/C09 - V9 HTTP Middleware Checkpoint.md` and `C10 - MemoryLimiter
+Implements Limiter Checkpoint.md` (C10: `MemoryLimiter` satisfies `Limiter` directly via a private
+clock — D83/D84/D85, G50/G51/G52). Deferred branches: middleware tests, observability, local HTTP
+example server, sliding window algorithms, delegate-on-error policy, Redis integration/runtime
+tests, and hot-key CAS mitigation (D85). The "memory adapter for `Limiter`" branch is **done** (as
+a direct refactor, not an adapter).
 
 ## Known cleanup items (mention when relevant; don't fix unprompted)
 

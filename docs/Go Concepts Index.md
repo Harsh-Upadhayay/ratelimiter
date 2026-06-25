@@ -55,6 +55,8 @@ This hub groups Go language and style concepts used by the rate limiter.
 - [[G16 - Helper Parameter Ordering]]
 - [[G17 - Interfaces From Real Variation]]
 - [[G18 - Structural Interface Satisfaction]]
+- [[G50 - Compile-Time Interface Assertion]]
+- [[G51 - Interface Narrows the Method Set]]
 - [[G19 - Marker Interfaces and Opaque State]]
 - [[G20 - Type Assertions]]
 - [[G21 - Constructor Validation Ownership]]
@@ -72,6 +74,7 @@ This hub groups Go language and style concepts used by the rate limiter.
 - [[G28 - Go Benchmarks]]
 - [[G36 - Test Helper Pattern]]
 - [[G37 - Contract Testing via Interface Parameter]]
+- [[G52 - go test Compiles the Whole Package]]
 
 ## Decision hubs
 

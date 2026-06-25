@@ -1,7 +1,7 @@
 package ratelimiter
 
 import (
-	"time"
+	"context"
 )
 
 // MemoryLimiter is the in-process limiter that users interact with to perform rate limiting checks.
@@ -9,6 +9,7 @@ import (
 type MemoryLimiter struct {
 	algo  memoryAlgorithm
 	store StateStore
+	clock clock
 }
 
 // NewMemoryLimiter creates a new MemoryLimiter with the specified algorithm.
@@ -20,6 +21,7 @@ func NewMemoryLimiter(algo memoryAlgorithm, store StateStore) (*MemoryLimiter, e
 	limiter := &MemoryLimiter{
 		algo:  algo,
 		store: store,
+		clock: realClock{},
 	}
 
 	return limiter, nil
@@ -29,7 +31,12 @@ func NewMemoryLimiter(algo memoryAlgorithm, store StateStore) (*MemoryLimiter, e
 // It returns a Result indicating whether the request is allowed,
 // how many requests are remaining in the current window,
 // and how long to wait before retrying if the limit has been exceeded.
-func (l *MemoryLimiter) Allow(key string, now time.Time) (Result, error) {
+func (ml *MemoryLimiter) Allow(ctx context.Context, key string) (Result, error) {
+
+	if ctx.Err() != nil {
+		return Result{}, ctx.Err()
+	}
+
 	const maxCASRetries = 10
 
 	if key == "" {
@@ -37,13 +44,13 @@ func (l *MemoryLimiter) Allow(key string, now time.Time) (Result, error) {
 	}
 
 	for attempt := 0; attempt < maxCASRetries; attempt++ {
-		curState, version, exists, err := l.store.Get(key)
+		curState, version, exists, err := ml.store.Get(key)
 		if err != nil {
 			return Result{}, err
 		}
 
-		result, updatedState, err := l.algo.Decide(
-			now,
+		result, updatedState, err := ml.algo.Decide(
+			ml.clock.now(),
 			curState,
 			exists,
 		)
@@ -51,7 +58,7 @@ func (l *MemoryLimiter) Allow(key string, now time.Time) (Result, error) {
 			return Result{}, err
 		}
 
-		ok, err := l.store.CompareAndSwap(key, version, updatedState)
+		ok, err := ml.store.CompareAndSwap(key, version, updatedState)
 
 		if err != nil {
 			return Result{}, err
