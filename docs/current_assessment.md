@@ -1,21 +1,15 @@
 # Current Assessment — Interview/Résumé Readiness
 
-**Date:** 2026-06-24  
-**Baseline:** assume all deferred V9 tasks completed (middleware tests, observability, local HTTP example, memory `Limiter` adapter, delegate-on-error policy).
+**Date:** 2026-06-26  
+**Baseline:** assume all deferred V9 tasks completed (middleware tests, observability, local HTTP example, delegate-on-error policy). Remaining work is tracked in [`../ROADMAP.md`](../ROADMAP.md).
 
 ---
 
-## The hidden design tension (read this first)
+## The design tension that was resolved (read this first)
 
-The `Limiter` interface and `MemoryLimiter` don't agree:
+Earlier, the `Limiter` interface and `MemoryLimiter` didn't agree — `MemoryLimiter.Allow` took `(key, now)` and so couldn't satisfy `Limiter` or pass through the middleware. **This is now resolved (ADR-0083–0085):** `MemoryLimiter.Allow` adopted the `Allow(ctx, key)` signature, moving its clock to a private, non-injectable field (`realClock` by default; symmetric with `RedisLimiter` owning Redis `TIME`). Both limiters now satisfy `Limiter` directly — see the compile-time assertions in `limiter.go`.
 
-```
-Limiter         Allow(ctx context.Context, key string)   // limiter.go
-RedisLimiter    Allow(ctx context.Context, key string)   // satisfies Limiter
-MemoryLimiter   Allow(key string, now time.Time)         // does NOT satisfy Limiter
-```
-
-The middleware calls `m.limiter.Allow(r.Context(), key)`, so today only `RedisLimiter` can go through the middleware. The deferred "memory adapter for `Limiter`" task is papering over a genuine philosophical fork: `RedisLimiter` threads `context` because it does I/O; `MemoryLimiter` threads an injected clock because it is pure. This is the most interview-revealing design decision left in the project — it isn't just labor, it's an architectural choice. See [[V7 - Sharded MemoryStore#ADR-0062 — Redis as a limiter, not a store (pivot)|ADR-0062]] for the earlier pivot that set up this fork.
+The interview-revealing part is the *reasoning*: `RedisLimiter` threads `context` because it does I/O; `MemoryLimiter` accepts it but only checks `ctx.Err()` because it can't block. The signatures were unified deliberately so one middleware drives both backends. See [[V7 - Sharded MemoryStore#ADR-0062 — Redis as a limiter, not a store (pivot)|ADR-0062]] for the pivot that set up the two-implementation design.
 
 ---
 
@@ -57,7 +51,7 @@ None of these are disqualifying. They mark the difference between "I built a cor
 | `context` inconsistency | Idiomatic Go threads `context` through any call that *might* do I/O. `MemoryLimiter` skipping it is defensible (it can't block), but the divergent signatures look like an oversight until explained. |
 | Generics | Go 1.22 — why opaque interfaces for state instead of `Limiter[S State]`? Probably correct, but be ready for "why not." |
 | Error wrapping | Sentinels are good; confirm `%w` + `errors.Is/As` is the documented contract. |
-| `memory_token_bucket_tests.go` | Misnamed: Go never compiles it as tests. Has an open TODO list. A visible blemish on a résumé project. |
+| `memory_token_bucket_tests.go` | Misnamed (`_tests.go`, not `_test.go`): Go never compiles it, so its two tests have **never run**, and token-bucket behavior is effectively untested. Tracked in [`../ROADMAP.md`](../ROADMAP.md) (P0). A visible blemish on a résumé project. |
 
 ---
 
@@ -68,5 +62,5 @@ None of these are disqualifying. They mark the difference between "I built a cor
 **"Final best": no, and the gap is informative.** This is a *single-node-correct, contention-optimized, multi-algorithm* limiter, not a *failover-correct, latency-aware, internet-scale* one. That is a fine place to stop for learning.
 
 ### Open questions for the next conversation
-1. Should `MemoryLimiter` adopt the `Limiter` signature (and where does its clock go?), or are these two different abstractions that shouldn't share one interface?
+1. ~~Should `MemoryLimiter` adopt the `Limiter` signature?~~ **Resolved** (ADR-0083–0085): yes, with a private clock. Both limiters satisfy `Limiter` directly.
 2. Of the four sysdesign gaps, which does a Staff interviewer reach for first — and is closing it a *learning* win or just a *résumé* win?
