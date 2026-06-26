@@ -16,7 +16,9 @@ and the non-goals left explicit.**
 
 The P1/P2 items below are mirrored as GitHub issues
 [#1–#14](https://github.com/Harsh-Upadhayay/ratelimiter/issues) under the
-[`v0.1.0`](https://github.com/Harsh-Upadhayay/ratelimiter/milestone/1) milestone.
+[`v1.0.0`](https://github.com/Harsh-Upadhayay/ratelimiter/milestone/1) milestone.
+(The V1–V9 learning iterations already ship as releases `v0.1.0`–`v0.9.0`;
+`v1.0.0` is the first **stable** release, gated on this checklist.)
 
 ---
 
@@ -66,7 +68,7 @@ The P1/P2 items below are mirrored as GitHub issues
 - [ ] `golangci-lint` (or at least `gofmt -l`) clean.
 - [ ] All gates green locally and in CI:
       `go build ./... && go vet ./... && go test ./... && go test -race ./...`.
-- [ ] `CHANGELOG.md` (Keep a Changelog format) and a first tagged release (`v0.1.0`).
+- [ ] `CHANGELOG.md` (Keep a Changelog format) and the first stable release (`v1.0.0`).
 
 ## P2 — Differentiators (pick ≥ 1)
 
@@ -93,4 +95,4 @@ decision, not an omission.
 ---
 
 > Tip: to make this GitHub-native, convert each P0/P1 item into an Issue and group
-> them under a `v0.1.0` Milestone; this file then becomes the high-level summary.
+> them under the `v1.0.0` Milestone; this file then becomes the high-level summary.
