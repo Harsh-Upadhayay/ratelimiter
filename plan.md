@@ -1,3 +1,11 @@
+> **Note (revised):** This is the original north-star plan, kept for reference.
+> Steps 3–4 were **superseded by ADR-0062**: Redis is **not** a `StateStore`
+> backend. `StateStore` is an in-process abstraction (it passes live Go state
+> structs); Redis stores bytes and owns atomicity server-side. So the distributed
+> path is a **parallel `RedisLimiter`** (single-shot Lua) satisfying the same
+> `Limiter` interface — not a swappable store, and there is no `DistributedLimiter`.
+> See [`docs/adr/README.md`](docs/adr/README.md) for the as-built design.
+
 **1. Split storage from logic.**  
 Define a `StateStore` interface (Get/CAS/PushEvent) so algorithms never touch Redis or memory directly.
 
